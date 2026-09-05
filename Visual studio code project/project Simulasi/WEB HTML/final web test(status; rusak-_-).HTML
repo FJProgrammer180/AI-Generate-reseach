@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Super Dashboard by Fajriansyah Adithama</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #35a8e7;
+      --primary-dark: #225ea8;
+      --accent: #ffd600;
+      --background: #f7faff;
+      --card: #fff;
+      --text: #141833;
+      --muted: #7b99bd;
+      --success: #00c46b;
+      --danger: #ef476f;
+      --shadow: 0 6px 24px #227ac609;
+      --border-light: #e2e8f0;
+    }
+    [data-theme='dark'] {
+      --background: #151824;
+      --card: #191d2a;
+      --text: #f2f8fc;
+      --muted: #93b3c7;
+      --border-light: #29304a;
+      --primary: #45dfff;
+      --primary-dark: #15afe1;
+      --shadow: 0 6px 24px #52e4fa17;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--background);
+      font-family: 'Inter', Arial, sans-serif;
+      color: var(--text);
+      transition: background .45s, color .37s;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .bg-blob {
+      position: fixed; z-index: 0; pointer-events:none; opacity:.23; filter:blur(70px);
+    }
+    .bg-blob1 { left: 0; top: 0; width:380px; height:300px; background:linear-gradient(125deg,#5e72e4,#35a8e7 85%);}
+    .bg-blob2 { right: -90px; top: 60px; width:280px; height:260px; background:linear-gradient(75deg,#ffd600,#39e3cc);}
+    .bg-blob3 { left:40vw; bottom:-79px; width: 340px; height: 170px; background:linear-gradient(65deg,#f767c4 49%,#ffe771);}
+    .bg-blob4 { right:7vw; bottom:-70px; width: 210px; height: 200px; background:linear-gradient(85deg,#fff,#35a8e7);}
+    [data-theme="dark"] .bg-blob1 {background:linear-gradient(125deg,#5e72e4,#1a2e44);}
+    [data-theme="dark"] .bg-blob2 {background:linear-gradient(75deg,#ffd60033,#134f4c);}
+    [data-theme="dark"] .bg-blob3 { background:linear-gradient(65deg,#422941,#225ea8); }
+    [data-theme="dark"] .bg-blob4 {background:linear-gradient(85deg,#252c44,#45dfff);}
+    .container {z-index:1;position:relative;max-width: 1160px;margin:28px auto 50px;background:var(--card);border-radius:19px;box-shadow:var(--shadow);padding:38px 27px;display:flex;flex-direction:column;}
+    header {
+      text-align: center;
+      margin-bottom: 12px;
+      z-index:5;
+    }
+    .headline {
+      font-size: 2.2em;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--primary-dark),var(--primary),var(--accent), var(--primary-dark));
+      background-size: 330% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip:text;
+      animation: gradmove 5s linear infinite;
+    }
+    @keyframes gradmove {to{background-position:330%}}
+    .subtext {font-size:1.2em; color:var(--muted);margin-top:4px;}
+    .status-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap: wrap;
+      margin-bottom: 7px;
+    }
+    .online-list {
+      min-width:210px; background:var(--background);border:1.3px solid var(--border-light);border-radius:13px;padding: 12px 21px 12px 16px;
+      font-size: 1.04em; box-shadow:0 2px 16px #7b99bd18;
+      display:flex; align-items:center;gap:16px; flex-wrap:wrap;
+      position:relative;
+    }
+    #admin-badge {
+      display:inline-block;
+      background: #ffd600;
+      color:#243;
+      padding:3px 10px;
+      border-radius:13px;
+      margin-left:7px;
+      font-weight:700;
+      font-size:.9em;
+      letter-spacing:1px;
+      box-shadow:0 2px 8px #ff9f0011;
+      margin-right:7px;
+      vertical-align:middle;
+    }
+    .online-user {
+      display:inline-flex;align-items:center;margin-right:11px;gap:4px;
+      font-size: 1em;
+    }
+    .dot {width:11px;height:11px;border-radius:50%;}
+    .dot.green {background:var(--success);}
+    .dot.red   {background:var(--danger);}
+    .dot.orange {background:#ffa502;}
+    .clock-bar {
+      padding: 10px 19px;
+      border-radius: 12px;
+      background:var(--background);
+      color:var(--primary-dark);
+      border:1.4px solid var(--border-light);
+      box-shadow:0 2px 10px #7b99bd1a;
+      font-size:1em;
+      font-weight:600;
+      min-width:190px;
+      text-align: center;
+    }
+    .holidays-list {
+      margin: 9px 0 0 0;
+      padding: 0 20px;
+      color:var(--primary-dark);
+      font-size:.97em;
+      max-width:820px;
+      list-style:none;
+    }
+    .holiday {
+      font-weight:600;
+      color: #eb456f;
+    }
+    .shortcuts-row {
+      margin:10px auto 22px;
+      display:flex;gap:32px;flex-wrap:wrap;justify-content:center;
+    }
+    .shortcut-btn {
+      display:inline-flex;align-items:center;gap:9px;
+      background:var(--primary);
+      color:#fff;text-decoration:none;
+      font-weight:600; font-size:1.08em;
+      border-radius:10px;padding:10px 18px;
+      box-shadow:0 2px 10px #227ac62a;
+      transition:.18s; border:none;outline:none; cursor:pointer;
+    }
+    .shortcut-btn:hover {background:var(--accent);color:var(--primary-dark);}
+    .shortcut-btn img {width:25px;height:25px;border-radius:5px;background:#fff;}
+    .schedule-container {
+      margin: 30px auto 16px; background:var(--background);
+      border:1.3px solid var(--border-light);border-radius:14px;box-shadow:0 2px 16px #7b99bd0f;
+      padding: 22px 28px 22px 28px;max-width:620px;
+    }
+    .schedule-container h3 {margin-top:0;color:var(--primary-dark);}
+    .schedule-list {
+      list-style:none;padding:0;margin:10px 0 0 0;
+    }
+    .schedule-item {
+      display:flex;justify-content:space-between;align-items:center;
+      padding:11px 0;border-bottom:1px dotted var(--border-light);
+      font-size:1.07em;
+    }
+    .schedule-time {color: var(--muted);}
+    .remove-btn {background: none;border: none;color: #ef476f;cursor:pointer;font-size:1.07em;}
+    .add-row{display:flex;gap:12px;align-items:center;margin-top:17px;}
+    .add-row input, .add-row select {
+      font-size:1em;padding:7px 11px;border-radius:6px;border: 1.2px solid var(--border-light);
+      outline:none;transition:.18s;
+      color:var(--text);background:var(--card);
+    }
+    .add-row button {padding:7px 11px;}
+    .chatbot-box {
+      margin: 35px auto 25px;max-width:500px;background:var(--background);border-radius:14px;padding:19px 26px;box-shadow:0 2px 16px #7b99bd10;border:1.4px solid var(--border-light);text-align:center;
+      display:none;   /* Default: hidden, appear for admin */
+    }
+    .chatbot-box h3 {margin-top:0;}
+    .chatbot-link {
+      margin:7px 0 0 0;
+      display:flex;gap:17px;justify-content:center;flex-wrap:wrap;
+    }
+    .chatbot-link a {
+      color:#fff;background:var(--primary-dark);border-radius:8px;text-decoration:none;padding:8px 22px;font-weight:600;transition:.15s;
+    }
+    .chatbot-link a:hover{background:var(--accent);color:var(--primary-dark);}
+    .section-title {font-size:1.2em;margin:32px 0 16px 0;color:var(--primary-dark);}
+    .bio-wrap {
+      display:flex;gap:19px;align-items:center;flex-wrap:wrap;margin:38px auto 16px;background:var(--background);border-radius:14px;box-shadow:0 2px 14px #87dbf914;padding:23px 21px 23px 21px;max-width:760px;
+    }
+    .bio-pic {width:92px;height:92px;border-radius:50%;object-fit:cover;box-shadow:0 2px 12px #47795820;background:#ecfcff;}
+    .bio-text {font-size:1.09em;color:var(--text);max-width:420px;}
+    .logo-list {
+      display:flex;gap:28px;justify-content:center;flex-wrap:wrap;
+      padding:15px 0 5px 0;
+    }
+    .logo-card {
+      text-align:center;background:var(--background);border-radius:12px;box-shadow:0 2px 8px #227ac61b;
+      padding:15px 9px 6px;width:110px;min-width:85px;
+      display:inline-flex;flex-direction:column;align-items:center;
+    }
+    .logo-card img {width:48px;height:48px;background:white;border-radius:7px;margin-bottom: 7px;}
+    .lang-list {
+      display:grid;grid-template-columns: repeat(auto-fit,minmax(226px,1fr));gap:17px;padding:11px 0 5px 0;margin-bottom:41px;
+    }
+    .lang-card {
+      background:var(--background);border-radius:10px;padding:15px 13px 8px 15px;box-shadow:0 2px 8px #227ac61b;display:flex;gap:13px;align-items:start;
+      border:1.2px solid var(--border-light);transition:.16s;
+    }
+    .lang-card:hover {background:var(--card);box-shadow:0 7px 22px #0054a530;}
+    .lang-logo {width:37px;min-width:37px;height:37px;background:white;display:flex;align-items:center;border-radius:7px;}
+    .lang-logo img {width:100%;height:100%;}
+    .lang-content h4{margin:0 0 5px 0;color:var(--primary);}
+    .lang-content p {margin:0;color:var(--muted);}
+    #auth-modal {
+      position: fixed;top:0;left:0;
+      width: 100vw; height: 100vh;z-index: 999;
+      background: #101418e0;display: flex;align-items: center;justify-content: center;
+    }
+    #auth-modal .auth-card {
+      background: #fff;border-radius: 18px;padding: 38px 40px;text-align: center;box-shadow: var(--shadow);max-width: 330px;
+      color:var(--primary-dark);
+    }
+    #auth-modal input {
+      width:93%;padding:13px 9px;margin:13px 0 20px;border-radius:7px;border: 1.1px solid #b0bedb;background: #f4f7fe;font-size:1.05em;outline:none;color:#3e4969;transition:border .16s;
+    }
+    #auth-modal input:focus {border-color:var(--primary);}
+    #auth-modal button {
+      background: linear-gradient(90deg,var(--primary),var(--accent));color:white;border:none;border-radius:6px;font-size:1.1em;padding:11px 30px;font-family:'Montserrat',Arial,sans-serif;font-weight:600;transition:background 0.19s;cursor: pointer;margin-bottom: 9px;
+    }
+    #auth-modal .error-msg {color: var(--danger);font-size: .98em;margin-bottom: 7px;min-height: 24px;display: block;}
+    .theme-toggle {
+      position:fixed;bottom:28px;right:28px;z-index:109;
+      background:var(--card);color: var(--primary-dark);border:none;
+      box-shadow:0 2px 16px #42e9c517;
+      border-radius: 50%;width:48px;height:48px;display:flex;align-items:center;justify-content: center;font-size: 1.7em;
+      cursor:pointer;transition: .18s;
+    }
+    .theme-toggle:hover {background:var(--primary);color:#fff;}
+    /* IG link khusus admin */
+    #ig-link {
+      display:none;
+      justify-content: center;
+      align-items: center;
+      margin:14px auto;
+      z-index:15;
+    }
+    #ig-link a {
+      color: #fff;
+      background: linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);
+      padding: 8.5px 25px 8.5px 15px;
+      border-radius: 16px;
+      font-size: 1em;
+      text-decoration: none;
+      font-weight: bold;
+      display:inline-block;
+      transition:.16s;
+      box-shadow: 0 4px 19px #ee2a7b16;
+      position:relative;
+      margin-left:4px;
+    }
+    #ig-link a:hover {
+      letter-spacing: .7px;
+      background: linear-gradient(90deg,#6228d7 60%,#ee2a7b 90%);
+      color:#ffd600;
+      transform:scale(1.06);
+      box-shadow: 0 7px 24px #f9ce342b;
+    }
+    #ig-link img {
+      width: 32px; height:32px;
+      margin-right: 11px;
+      border-radius: 8px;
+      background: #fff;
+      vertical-align: middle;
+    }
+    @media (max-width:950px){
+      .container{padding:19px 2vw;}
+      .bio-wrap{padding:18px 7px;}
+      .schedule-container{padding:12px 7px;}
+    }
+    @media (max-width:650px){
+      .container{padding: 7px 0;}
+      .bio-wrap{flex-direction:column;align-items:start;}
+      .bio-pic{margin-bottom:7px;}
+      .logo-list{gap:15px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- BACKGROUND EFFECT -->
+  <div class="bg-blob bg-blob1"></div>
+  <div class="bg-blob bg-blob2"></div>
+  <div class="bg-blob bg-blob3"></div>
+  <div class="bg-blob bg-blob4"></div>
+  <!-- LOGIN MODAL -->
+  <div id="auth-modal">
+    <form class="auth-card" id="login-form" autocomplete="off" onsubmit="return false">
+      <h2>Masuk Dashboard</h2>
+      <span class="error-msg" id="login-error">&nbsp;</span>
+      <input type="email" id="email-input" required autocomplete="off" placeholder="Masukkan email Anda"/>
+      <button type="submit">Masuk</button>
+      <div style="font-size:.93em;color:#709;opacity:.65;margin-top:15px;">
+        Siapapun bisa daftar.<br>
+      </div>
+    </form>
+  </div>
+  <!-- THEME TOGGLE -->
+  <button class="theme-toggle" id="theme-toggle-btn" title="Dark/Light Mode">&#9788;</button>
+  <!-- IG LINK KHUSUS ADMIN -->
+  <div id="ig-link" style="display:none">
+    <a href="https://instagram.com/Fajriansyah.adithama" rel="noopener" target="_blank">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="IG">
+      @Fajriansyah.adithama
+    </a>
+  </div>
+  <div class="container" id="main-app" style="display:none">
+    <header>
+      <div class="headline">Super Dashboard</div>
+      <div class="subtext">By Fajriansyah Adithama</div>
+    </header>
+    <!-- Status & clock -->
+    <div class="status-row">
+      <!-- Online Users -->
+      <div class="online-list" id="online-list">
+        <!-- Dynamic status here... -->
+      </div>
+      <!-- Clock -->
+      <div class="clock-bar" id="clockbar">
+        <!-- JavaScript updates time/date here -->
+      </div>
+    </div>
+    <ul class="holidays-list" id="holidays-list">
+      <!-- Holiday list JavaScript -->
+    </ul>
+    <!-- Shortcuts -->
+    <div class="shortcuts-row">
+      <a class="shortcut-btn" href="https://youtube.com/" target="_blank"><img src="https://img.icons8.com/color/48/000000/youtube-play.png"> YouTube</a>
+      <a class="shortcut-btn" href="https://facebook.com/" target="_blank"><img src="https://img.icons8.com/color/48/000000/facebook-new.png"> Facebook</a>
+      <a class="shortcut-btn" href="https://t.me/" target="_blank"><img src="https://img.icons8.com/color/48/000000/telegram-app.png"> Telegram</a>
+      <a class="shortcut-btn" href="https://instagram.com/Fajriansyah.adithama" target="_blank"><img src="https://img.icons8.com/color/48/000000/instagram-new.png"> Instagram</a>
+      <a class="shortcut-btn" href="https://chat.openai.com" target="_blank"><img src="https://img.icons8.com/color/48/000000/artificial-intelligence.png"> AI Chat</a>
+    </div>
+    <!-- Jadwal Harian -->
+    <div class="schedule-container">
+      <h3>Jadwal Pribadi</h3>
+      <ul class="schedule-list" id="schedule-list">
+        <!-- Jadwal items -->
+      </ul>
+      <form class="add-row" id="schedule-form" onsubmit="return false">
+        <input type="date" id="sched-date" required>
+        <input type="time" id="sched-time" required>
+        <input type="text" id="sched-task" required placeholder="Tulis kegiatan...">
+        <button type="submit" class="shortcut-btn" style="padding:7px 17px;font-size:.97em">Tambah</button>
+      </form>
+    </div>
+    <!-- AI chatbot panel khusus admin -->
+    <div class="chatbot-box" id="ai-chat-panel">
+      <h3>Chatbot AI (Admin Only)</h3>
+      <div style="font-size:1em;color:var(--muted);margin-bottom:8px;">
+        Fitur chat AI belum di-host! Klik salah satu layanan AI berikut:
+      </div>
+      <div class="chatbot-link">
+        <a href="https://chat.openai.com" target="_blank">ChatGPT</a>
+        <a href="https://bard.google.com/" target="_blank">Gemini/Bard</a>
+        <a href="https://copilot.microsoft.com/" target="_blank">Copilot</a>
+      </div>
+    </div>
+    <!-- Profile & Bio -->
+    <div class="bio-wrap" data-aos="fade-up">
+      <img class="bio-pic" src="https://i.ibb.co/njWQPN8/avatar-example.jpg" alt="Foto Fajriansyah">
+      <div class="bio-text">
+        <b>Fajriansyah Adithama</b><br>
+        <span>Pemrogram, penggiat web, kreator teknologi kampus. Passion for learning and sharing, open for project and collaboration.<br>
+        IG: <a href="https://instagram.com/Fajriansyah.adithama" target="_blank">@Fajriansyah.adithama</a> </span>
+      </div>
+    </div>
+    <div class="logo-list">
+      <div class="logo-card"><img src="https://upload.wikimedia.org/wikipedia/id/0/0a/Institut_Teknologi_Sepuluh_Nopember.png" alt="ITS"><span>ITS</span></div>
+      <div class="logo-card"><img src="https://i.imgur.com/H2YgHXh.png" alt="Logo Unik"><span>Logo Unik</span></div>
+    </div>
+    <div class="section-title">Bahasa Pemrograman Populer</div>
+    <div class="lang-list">
+      <div class="lang-card">
+        <span class="lang-logo"><img src="https://www.python.org/static/opengraph-icon-200x200.png"></span>
+        <div class="lang-content"><h4>Python</h4><p>Mudah, interaktif, banyak library AI, data science, web, dst.</p></div>
+      </div>
+      <div class="lang-card">
+        <span class="lang-logo"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968292.png"></span>
+        <div class="lang-content"><h4>JavaScript</h4><p>Bahasa utama web, interaktif & backend (Node.js).</p></div>
+      </div>
+      <div class="lang-card">
+        <span class="lang-logo"><img src="https://cdn-icons-png.flaticon.com/512/888/888859.png"></span>
+        <div class="lang-content"><h4>HTML</h4><p>Fondasi web, strukturisasi konten halaman.</p></div>
+      </div>
+      <div class="lang-card">
+        <span class="lang-logo"><img src="https://cdn-icons-png.flaticon.com/512/732/732190.png"></span>
+        <div class="lang-content"><h4>CSS</h4><p>Tata letak/desain halaman web, animasi, responsif.</p></div>
+      </div>
+      <div class="lang-card">
+        <span class="lang-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg"></span>
+        <div class="lang-content"><h4>C</h4><p>Bahasa tingkat rendah, dasar OS/system, cepat & efisien.</p></div>
+      </div>
+      <div class="lang-card">
+        <span class="lang-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg"></span>
+        <div class="lang-content"><h4>C++</h4><p>OOP, untuk aplikasi kompleks, game engine, dsb.</p></div>
+      </div>
+      <div class="lang-card">
+        <span class="lang-logo"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968282.png"></span>
+        <div class="lang-content"><h4>Java</h4><p>Enterprise, Android, crossplatform.</p></div>
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // =================== MULTI ADMIN SUPPORT ===================
+    const ADMIN_EMAILS = [
+      "fajriansyah@gmail.com",
+      "syahwinasaleh@gmail.com"
+      // Tambahkan email admin lain di sini
+    ];
+    function isAdmin(email) {
+      return ADMIN_EMAILS.includes(email);
+    }
+    function showSpecialFeatures(email) {
+      // Tampilkan badge admin di daftar online user
+      renderOnlineList();
+      // IG link & chatbot AI hanya muncul untuk admin!
+      if (isAdmin(email)) {
+        document.getElementById('ig-link').style.display = "flex";
+        document.getElementById('ai-chat-panel').style.display = "";
+        // Global badge, hanya satu kali insert!
+        if (!document.getElementById('admin-badge-global')) {
+          let badge = document.createElement('div');
+          badge.id = 'admin-badge-global';
+          badge.textContent = 'ADMIN';
+          badge.style = 'position:fixed;top:12px;right:90px;z-index:1111;background:#ffd600;color:#243;padding:5px 15px 5px 15px;border-radius:30px;font-weight:700;font-size:1.18em;box-shadow:0 2px 12px #ff9f0011;';
+          document.body.appendChild(badge);
+        }
+      }
+    }
+    // =================== THEME MODE ===================
+    function setTheme(mode){
+      document.documentElement.setAttribute('data-theme', mode);
+      localStorage.setItem('theme', mode);
+      document.getElementById('theme-toggle-btn').innerHTML = mode==='dark'?'&#9728;':'&#9790;';
+      document.getElementById('theme-toggle-btn').title=mode==='dark'?'Mode Terang':'Mode Gelap';
+    }
+    let dark = localStorage.getItem('theme')==='dark';
+    setTheme(dark?'dark':'light');
+    document.getElementById('theme-toggle-btn').onclick=()=>{
+      let now = document.documentElement.getAttribute('data-theme');
+      setTheme(now==='dark'?'light':'dark');
+    };
+
+    // =================== LOGIN DAN ONLINE LIST ===================
+    let onlineList = JSON.parse(localStorage.getItem('onlineUsers')||'{}');
+    let userEmail = localStorage.getItem('userEmail')||"";
+    let main = document.getElementById('main-app');
+    function saveOnlineList(list){
+      localStorage.setItem('onlineUsers', JSON.stringify(list));
+    }
+    function cleanOnlineList(){
+      let now = Date.now();
+      let filtered = {};
+      Object.entries(onlineList).forEach(([k,v])=>{
+        if (now-v.lastUpdate<180_000) filtered[k]=v;
+      });
+      onlineList=filtered;
+      saveOnlineList(filtered);
+    }
+    // --- RENDER LIST ONLINE DENGAN BADGE ADMIN ---
+    function renderOnlineList(){
+      cleanOnlineList();
+      let html="";
+      Object.entries(onlineList).forEach(([email,v])=>{
+        let name = email.split("@")[0];
+        let dot = "red"; // default offline
+        if (v && v.status=="online") dot="green";
+        else if (v && v.status=="away") dot="orange";
+        // Tampilkan badge ADMIN jika email adalah admin
+        let isadmin = isAdmin(email);
+        html+=`<span class="online-user">
+          <span class="dot ${dot}"></span>
+          ${name}${isadmin?'<span id="admin-badge"> ADMIN </span>':''}
+        </span>`;
+      });
+      if(!html)html='<span class="online-user"><span class="dot red"></span>tidak ada user online</span>';
+      document.getElementById('online-list').innerHTML=html;
+    }
+    function setOnline(email){
+      let n = email.split("@")[0];
+      onlineList[email] = {name:n, status:"online", lastUpdate: Date.now()};
+      saveOnlineList(onlineList);
+      renderOnlineList();
+    }
+    function setOffline(email){
+      if(onlineList[email]){onlineList[email].status="offline";onlineList[email].lastUpdate=Date.now();}
+      saveOnlineList(onlineList);
+      renderOnlineList();
+    }
+    if(userEmail){
+      authModal.style.display="none";
+      main.style.display="";
+      setOnline(userEmail);
+      setInterval(()=>setOnline(userEmail), 55_000);
+      showSpecialFeatures(userEmail);
+    }
+    document.getElementById('login-form').onsubmit=function(){
+      let email = emailInput.value.trim().toLowerCase();
+      if(!email){
+        loginError.textContent="Email wajib diisi!";
+        return false;
+      }
+      userEmail=email;
+      localStorage.setItem('userEmail',email);
+      setOnline(email);
+      main.style.display="";
+      authModal.style.display="none";
+      showSpecialFeatures(email);
+      return false;
+    };
+    // Logout: Ctrl+Shift+O
+    window.addEventListener("keydown",e=>{
+      if(e.ctrlKey&&e.shiftKey&&e.key==="O"){
+        setOffline(userEmail);
+        localStorage.removeItem('userEmail');
+        location.reload();
+      }
+    });
+    window.addEventListener("beforeunload",()=>setOffline(userEmail));
+    renderOnlineList();
+
+    // =================== CLOCK & HOLIDAY ===================
+    const holidays = [
+      {date:"2026-01-01",name:"Tahun Baru Masehi"},
+      {date:"2026-01-25",name:"Isra Mi'raj"},
+      {date:"2026-02-13",name:"Tahun Baru Imlek"},
+      {date:"2026-03-19",name:"Nyepi"},
+      {date:"2026-04-01",name:"Waisak"},
+      {date:"2026-05-16",name:"Kenaikan Isa Almasih"},
+      {date:"2026-06-14",name:"Idul Adha"},
+      {date:"2026-07-21",name:"Tahun Baru Islam"},
+      {date:"2026-08-17",name:"Hari Kemerdekaan"},
+      {date:"2026-09-18",name:"Maulid Nabi"},
+      {date:"2026-12-25",name:"Natal"},
+      {date:"2027-01-01",name:"Tahun Baru Masehi"},
+      {date:"2027-02-13",name:"Isra Mi'raj"},
+      {date:"2027-02-02",name:"Tahun Baru Imlek"},
+      {date:"2027-03-09",name:"Nyepi"},
+      {date:"2027-05-22",name:"Kenaikan Isa Almasih"},
+      {date:"2027-08-08",name:"Idul Adha"},
+      {date:"2027-08-17",name:"Hari Kemerdekaan"},
+      {date:"2027-09-09",name:"Tahun Baru Islam"},
+      {date:"2027-10-28",name:"Maulid Nabi"},
+      {date:"2027-12-25",name:"Natal"}
+    ];
+    function pad(x){return x<10?'0'+x:x}
+    function showClock(){
+      let now = new Date();
+      let tgl = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+      let jam = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      let day = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][now.getDay()];
+      let todayHoliday = holidays.filter(h=>h.date==tgl);
+      let htm = `<b>${day}</b>, ${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()} <b>${jam}</b>`;
+      if(todayHoliday.length) htm+=`<br><span class="holiday">${todayHoliday.map(h=>h.name).join(", ")}</span>`;
+      document.getElementById('clockbar').innerHTML=htm;
+      let hl=holidays.filter(h=>h.date>=tgl).slice(0,4);
+      let hlist = hl.map(h=>
+        `<li>${h.date}: <span class="holiday">${h.name}</span></li>`).join("");
+      document.getElementById('holidays-list').innerHTML="Hari libur nasional mendatang: "+hlist;
+    }
+    setInterval(showClock,900);showClock();
+
+    // =================== JADWAL FUNCTION ===================
+    let userJadwal = [];
+    function loadJadwal(){
+      if(!userEmail) return;
+      userJadwal = JSON.parse(localStorage.getItem('sched-'+userEmail)||"[]");
+      renderJadwal();
+    }
+    function renderJadwal(){
+      let list = document.getElementById('schedule-list');
+      if(!userJadwal.length){list.innerHTML="<li>Belum ada jadwal.</li>";return;}
+      list.innerHTML = userJadwal.map((j,i)=>`
+        <li class="schedule-item">
+          <span>${j.tanggal}</span>
+          <span class="schedule-time">${j.jam}</span>
+          <span>${j.kegiatan}</span>
+          <button class="remove-btn" onclick="removeJadwal(${i})" title="Hapus">&times;</button>
+        </li>`).join("");
+    }
+    function saveJadwal(){
+      localStorage.setItem('sched-'+userEmail, JSON.stringify(userJadwal));
+      renderJadwal();
+    }
+    document.getElementById('schedule-form').onsubmit=function(){
+      let tanggal = sched-date.value, jam = sched-time.value, kegiatan=sched-task.value.trim();
+      if(kegiatan){userJadwal.push({tanggal,jam,kegiatan});saveJadwal();}
+      this.reset();return false;
+    };
+    window.removeJadwal=function(idx){userJadwal.splice(idx,1);saveJadwal();}
+    if(userEmail)loadJadwal();
+
+    // =================== ANIMASI / AOS ===================
+    AOS.init({ duration: 800, offset: 80 });
+  </script>
+</body>
+</html>

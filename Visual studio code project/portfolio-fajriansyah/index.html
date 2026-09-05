@@ -1,0 +1,607 @@
+// ============================================================
+//  FAJRIANSYAH ADITHAMA — FULL JS BUILDER
+//  Seluruh halaman dibangun secara dinamis oleh JavaScript
+// ============================================================
+
+(function () {
+  'use strict';
+
+  // ===== UTILITY =====
+  const $ = (tag, attrs = {}, ...children) => {
+    const el = document.createElement(tag);
+    Object.entries(attrs).forEach(([k, v]) => {
+      if (k === 'className') el.className = v;
+      else if (k === 'innerHTML') el.innerHTML = v;
+      else if (k.startsWith('on')) el.addEventListener(k.slice(2).toLowerCase(), v);
+      else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+      else el.setAttribute(k, v);
+    });
+    children.flat(Infinity).forEach(c => {
+      if (typeof c === 'string' || typeof c === 'number') el.appendChild(document.createTextNode(c));
+      else if (c instanceof HTMLElement) el.appendChild(c);
+    });
+    return el;
+  };
+
+  const div = (a, ...c) => $('div', a, ...c);
+  const span = (a, ...c) => $('span', a, ...c);
+  const img = (a) => $('img', a);
+  const h1 = (a, ...c) => $('h1', a, ...c);
+  const h2 = (a, ...c) => $('h2', a, ...c);
+  const h3 = (a, ...c) => $('h3', a, ...c);
+  const p = (a, ...c) => $('p', a, ...c);
+  const a = (a, ...c) => $('a', a, ...c);
+  const btn = (a, ...c) => $('button', a, ...c);
+  const input = (a) => $('input', a);
+  const textarea = (a) => $('textarea', a);
+  const form = (a, ...c) => $('form', a, ...c);
+  const label = (a, ...c) => $('label', a, ...c);
+  const section = (a, ...c) => $('section', a, ...c);
+  const nav = (a, ...c) => $('nav', a, ...c);
+  const footer = (a, ...c) => $('footer', a, ...c);
+  const icon = (name) => $('i', { 'data-lucide': name, className: 'w-4 h-4' });
+
+  // ===== TOAST =====
+  const toastEl = div({ id: 'toast', className: 'toast' });
+  const toastIcon = $('i', { 'data-lucide': 'check-circle', className: 'w-4 h-4 text-green-400' });
+  const toastMsg = span({ id: 'toast-msg' }, 'Message sent!');
+  toastEl.append(toastIcon, toastMsg);
+
+  function showToast(message, duration = 3000) {
+    toastMsg.textContent = message;
+    toastEl.classList.add('show');
+    setTimeout(() => toastEl.classList.remove('show'), duration);
+  }
+
+  // ===== PARTICLES =====
+  const particlesContainer = div({ id: 'particles', className: 'fixed inset-0 pointer-events-none z-0', 'aria-hidden': 'true' });
+  const particleColors = ['rgba(244,63,94,0.15)', 'rgba(251,146,60,0.12)', 'rgba(241,245,249,0.3)'];
+  for (let i = 0; i < 20; i++) {
+    const size = Math.random() * 6 + 2;
+    const p = div({
+      className: 'particle',
+      style: {
+        width: size + 'px', height: size + 'px',
+        left: Math.random() * 100 + '%', top: Math.random() * 100 + '%',
+        background: particleColors[Math.floor(Math.random() * particleColors.length)],
+        animationDelay: -(Math.random() * 6) + 's',
+        animationDuration: (Math.random() * 4 + 4) + 's',
+      }
+    });
+    particlesContainer.appendChild(p);
+  }
+
+  // ===== MOBILE MENU =====
+  const mobileMenu = div({ id: 'mobile-menu', className: 'mobile-menu fixed inset-0 z-50 bg-white/95 flex flex-col', style: { backdropFilter: 'blur(24px)' } });
+  const mobileHeader = div({ className: 'flex items-center justify-between px-6 h-14' },
+    div({ className: 'flex items-center gap-2' },
+      div({ className: 'w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-orange-400 flex items-center justify-center text-white font-bold text-sm', innerHTML: 'FA' })
+    ),
+    btn({ id: 'mobile-close', className: 'p-2 rounded-xl hover:bg-slate-100 transition-colors' }, icon('x'))
+  );
+  const mobileLinks = div({ className: 'flex-1 flex flex-col items-center justify-center gap-8' });
+  ['About', 'Campus', 'Skills', 'Journey', 'Contact'].forEach(name => {
+    mobileLinks.appendChild(a({ href: '#' + name.toLowerCase(), className: 'mobile-link text-2xl font-semibold text-slate-900 hover:text-rose-500 transition-colors' }, name));
+  });
+  mobileMenu.append(mobileHeader, mobileLinks);
+
+  function openMobile() { mobileMenu.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeMobile() { mobileMenu.classList.remove('open'); document.body.style.overflow = ''; }
+
+  // ===== NAV =====
+  const navEl = nav({ className: 'nav-glass fixed top-0 left-0 right-0 z-50 h-14' },
+    div({ className: 'max-w-7xl mx-auto px-6 h-full flex items-center justify-between' },
+      a({ href: '#hero', className: 'flex items-center gap-2 group' },
+        div({ className: 'w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-orange-400 flex items-center justify-center text-white font-bold text-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6', innerHTML: 'FA' }),
+        span({ className: 'font-semibold text-slate-900 text-sm tracking-tight' }, 'Fajriansyah')
+      ),
+      div({ className: 'hidden md:flex items-center gap-8' },
+        ...['About', 'Campus', 'Skills', 'Journey', 'Contact'].map(n =>
+          a({ href: '#' + n.toLowerCase(), className: 'nav-link text-sm text-slate-500 hover:text-slate-900 transition-colors duration-200' }, n)
+        )
+      ),
+      div({ className: 'flex items-center gap-3' },
+        div({ className: 'hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 border border-green-100' },
+          div({ className: 'relative w-2 h-2' },
+            div({ className: 'absolute inset-0 rounded-full bg-green-500 status-pulse' }),
+            div({ className: 'relative w-2 h-2 rounded-full bg-green-500' })
+          ),
+          span({ className: 'text-xs font-medium text-green-700' }, 'Available')
+        ),
+        btn({ id: 'mobile-toggle', className: 'md:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors' }, icon('menu'))
+      )
+    )
+  );
+
+  // ===== HERO =====
+  const heroContent = div({ className: 'max-w-7xl mx-auto px-6 w-full relative z-10' },
+    div({ className: 'flex flex-col lg:flex-row items-center gap-12 lg:gap-20' },
+
+      // Left text
+      div({ className: 'flex-1 text-center lg:text-left' },
+        div({ className: 'animate-fadeInUp opacity-0', style: { animationDelay: '.1s', animationFillMode: 'forwards' } },
+          div({ className: 'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm mb-8' },
+            span({ className: 'w-2 h-2 rounded-full bg-rose-500' }),
+            span({ className: 'text-xs font-semibold uppercase tracking-widest text-slate-500' }, 'Welcome to my world')
+          )
+        ),
+        h1({ className: 'animate-fadeInUp opacity-0', style: { animationDelay: '.2s', animationFillMode: 'forwards' } },
+          span({ className: 'block text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.05] text-slate-900' }, 'Hi, I\'m'),
+          span({ className: 'block text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.05] shimmer-text mt-2' }, 'Fajriansyah'),
+          span({ className: 'block text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.05] text-slate-900 mt-2' }, 'Adithama')
+        ),
+        div({ className: 'animate-fadeInUp opacity-0 mt-8', style: { animationDelay: '.4s', animationFillMode: 'forwards' } },
+          div({ className: 'inline-flex items-center justify-center lg:justify-start' },
+            span({ className: 'text-lg md:text-xl text-slate-500 font-light typewriter-text', id: 'typewriter' })
+          )
+        ),
+        div({ className: 'animate-fadeInUp opacity-0 mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start', style: { animationDelay: '.5s', animationFillMode: 'forwards' } },
+          a({ href: '#about', className: 'inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-medium text-base hover:bg-slate-800 active:scale-95 transition-all duration-150 shadow-lg hover:shadow-xl' },
+            span('Discover Me'), icon('arrow-down')
+          ),
+          a({ href: '#contact', className: 'inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-2xl font-medium text-base border border-slate-200 hover:border-slate-300 hover:shadow-md active:scale-95 transition-all duration-150' },
+            icon('mail'), span('Get in Touch')
+          )
+        ),
+        // Stats
+        div({ className: 'animate-fadeInUp opacity-0 mt-12 flex items-center gap-8 justify-center lg:justify-start', style: { animationDelay: '.7s', animationFillMode: 'forwards' } },
+          div({},
+            div({ className: 'text-3xl font-semibold text-slate-900 counter', 'data-target': '20' }, '0'),
+            div({ className: 'text-xs text-slate-500 font-medium mt-1' }, 'Projects')
+          ),
+          div({ className: 'w-px h-10 bg-slate-200' }),
+          div({},
+            div({ className: 'text-3xl font-semibold text-slate-900 counter', 'data-target': '5' }, '0'),
+            div({ className: 'text-xs text-slate-500 font-medium mt-1' }, 'Certifications')
+          ),
+          div({ className: 'w-px h-10 bg-slate-200' }),
+          div({},
+            div({ className: 'text-3xl font-semibold text-slate-900 counter', 'data-target': '3' }, '0'),
+            div({ className: 'text-xs text-slate-500 font-medium mt-1' }, 'Years Exp.')
+          )
+        )
+      ),
+
+      // Right profile
+      div({ className: 'flex-shrink-0 animate-scaleIn opacity-0', style: { animationDelay: '.3s', animationFillMode: 'forwards' } },
+        div({ className: 'relative' },
+          div({ className: 'absolute -inset-8 rounded-full border-2 border-dashed border-slate-200/60', style: { animation: 'spin-slow 30s linear infinite' } }),
+          div({ className: 'absolute -inset-16 rounded-full border border-dashed border-slate-200/30', style: { animation: 'spin-slow 50s linear infinite reverse' } }),
+          div({ className: 'profile-ring w-56 h-56 md:w-72 md:h-72 rounded-full overflow-hidden' },
+            img({ src: 'https://picsum.photos/seed/fajriansyah-portrait/600/600.jpg', alt: 'Fajriansyah Adithama', className: 'w-full h-full object-cover rounded-full' })
+          ),
+          // Floating badges
+          div({ className: 'absolute -right-4 top-8', style: { animation: 'float 6s ease-in-out infinite' } },
+            div({ className: 'px-3 py-2 bg-white rounded-xl shadow-lg border border-slate-100 flex items-center gap-2' },
+              span({ innerHTML: '🇮🇩', className: 'text-lg' }), span({ className: 'text-xs font-semibold text-slate-700' }, 'Indonesia')
+            )
+          ),
+          div({ className: 'absolute -left-6 bottom-12', style: { animation: 'float 6s ease-in-out infinite', animationDelay: '-2s' } },
+            div({ className: 'px-3 py-2 bg-white rounded-xl shadow-lg border border-slate-100 flex items-center gap-2' },
+              span({ innerHTML: '🎓', className: 'text-lg' }), span({ className: 'text-xs font-semibold text-slate-700' }, 'Student')
+            )
+          ),
+          div({ className: 'absolute right-4 -bottom-2', style: { animation: 'float 6s ease-in-out infinite', animationDelay: '-4s' } },
+            div({ className: 'px-3 py-2 bg-white rounded-xl shadow-lg border border-slate-100 flex items-center gap-2' },
+              span({ innerHTML: '💻', className: 'text-lg' }), span({ className: 'text-xs font-semibold text-slate-700' }, 'Developer')
+            )
+          )
+        )
+      )
+    )
+  );
+
+  // Orbit dots
+  const orbitContainer = div({ className: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] pointer-events-none', 'aria-hidden': 'true' });
+  [0, -2.67, -5.33].forEach((delay, i) => {
+    const colors = ['bg-rose-400/60', 'bg-orange-400/60', 'bg-amber-400/60'];
+    orbitContainer.appendChild(div({ className: `orbit-dot ${colors[i]}`, style: { animationDelay: delay + 's' } }));
+  });
+
+  const heroSection = section({ id: 'hero', className: 'relative min-h-screen flex items-center overflow-hidden pt-14' },
+    div({ className: 'absolute top-20 -right-32 w-96 h-96 bg-rose-200/40 rounded-full pointer-events-none', style: { filter: 'blur(100px)' } }),
+    div({ className: 'absolute bottom-20 -left-32 w-80 h-80 bg-orange-200/30 rounded-full pointer-events-none', style: { filter: 'blur(100px)' } }),
+    div({ className: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-slate-200/50 pointer-events-none' }),
+    div({ className: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-slate-200/30 pointer-events-none' }),
+    orbitContainer,
+    heroContent,
+    // Scroll indicator
+    div({ className: 'absolute bottom-8 left-1/2 -translate-x-1/2 animate-fadeInUp opacity-0', style: { animationDelay: '.8s', animationFillMode: 'forwards' } },
+      div({ className: 'flex flex-col items-center gap-2' },
+        span({ className: 'text-[10px] uppercase tracking-widest text-slate-400 font-medium' }, 'Scroll'),
+        div({ className: 'w-6 h-10 border-2 border-slate-300 rounded-full flex justify-center pt-2' },
+          div({ className: 'w-1 h-2 bg-slate-400 rounded-full', style: { animation: 'bounce-scroll 1.5s infinite' } })
+        )
+      )
+    )
+  );
+
+  // ===== ABOUT =====
+  const aboutSection = section({ id: 'about', className: 'py-24 px-6 relative' },
+    div({ className: 'max-w-6xl mx-auto' },
+      div({ className: 'reveal text-center mb-16' },
+        div({ className: 'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 border border-rose-100 text-xs font-semibold uppercase tracking-widest text-rose-600 mb-4' },
+          icon('user'), span('About Me')
+        ),
+        h2({ className: 'text-4xl md:text-5xl font-semibold tracking-tight text-slate-900' }, 'Get to Know Me')
+      ),
+      div({ className: 'grid md:grid-cols-2 gap-12 items-center' },
+        // Info card
+        div({ className: 'reveal' },
+          div({ className: 'gradient-border bg-white p-8 rounded-3xl shadow-sm' },
+            p({ className: 'text-lg text-slate-600 leading-relaxed' },
+              'Hello! I\'m ', $('strong', { className: 'text-slate-900' }, 'Fajriansyah Adithama'), ', a passionate student and developer from Indonesia. I love crafting digital experiences that are both beautiful and functional.'
+            ),
+            p({ className: 'text-base text-slate-500 leading-relaxed mt-4' },
+              'With a deep curiosity for technology and design, I spend my time building projects that solve real-world problems. I believe in continuous learning and pushing boundaries.'
+            ),
+            div({ className: 'grid grid-cols-2 gap-4 pt-4' },
+              ...[
+                ['📍', 'Location', 'Indonesia'],
+                ['🎓', 'Status', 'Student'],
+                ['🌐', 'Language', 'ID & EN'],
+                ['💡', 'Focus', 'Full-Stack'],
+              ].map(([emoji, label, value]) =>
+                div({ className: 'p-4 bg-slate-50 rounded-2xl' },
+                  div({ className: 'text-2xl mb-1', innerHTML: emoji }),
+                  div({ className: 'text-xs text-slate-500 font-medium' }, label),
+                  div({ className: 'text-sm font-semibold text-slate-900' }, value)
+                )
+              )
+            )
+          )
+        ),
+        // Photo
+        div({ className: 'reveal' },
+          div({ className: 'relative' },
+            img({ src: 'https://picsum.photos/seed/fajriansyah-about/800/900.jpg', alt: 'Fajriansyah working', className: 'w-full rounded-3xl shadow-xl object-cover aspect-[4/5]' }),
+            div({ className: 'absolute inset-0 rounded-3xl bg-gradient-to-t from-slate-900/20 to-transparent' }),
+            div({ className: 'absolute bottom-6 left-6 right-6' },
+              div({ className: 'bg-white/90 rounded-2xl p-4 shadow-lg', style: { backdropFilter: 'blur(12px)' } },
+                div({ className: 'flex items-center gap-3' },
+                  div({ className: 'w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-orange-400 flex items-center justify-center text-white font-bold text-sm', innerHTML: 'FA' }),
+                  div({},
+                    div({ className: 'text-sm font-semibold text-slate-900' }, 'Fajriansyah Adithama'),
+                    div({ className: 'text-xs text-slate-500' }, '"Code with passion, design with purpose."')
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+
+  // ===== CAMPUS =====
+  function buildCampusCard(seed, label, sub, emoji, delay) {
+    return div({ className: `reveal campus-card relative rounded-2xl overflow-hidden cursor-pointer group`, style: { animationDelay: delay + 's' } },
+      img({ src: `https://picsum.photos/seed/${seed}/500/600.jpg`, alt: label, className: 'campus-img w-full aspect-[3/4] object-cover transition-transform duration-500' }),
+      div({ className: 'campus-overlay absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 transition-opacity duration-300' }),
+      div({ className: 'campus-label absolute bottom-4 left-4 right-4 transform translate-y-4 opacity-0 transition-all duration-300' },
+        div({ className: 'text-xs font-semibold uppercase tracking-widest text-rose-400' }, emoji + ' ' + label),
+        div({ className: 'text-sm font-medium text-white mt-1' }, sub)
+      )
+    );
+  }
+
+  const campusSection = section({ id: 'campus', className: 'py-24 px-6 bg-white relative' },
+    div({ className: 'max-w-7xl mx-auto' },
+      div({ className: 'reveal text-center mb-16' },
+        div({ className: 'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50 border border-orange-100 text-xs font-semibold uppercase tracking-widest text-orange-600 mb-4' },
+          icon('graduation-cap'), span('Campus Life')
+        ),
+        h2({ className: 'text-4xl md:text-5xl font-semibold tracking-tight text-slate-900' }, 'Indonesian Campus'),
+        p({ className: 'text-lg text-slate-500 mt-4 max-w-2xl mx-auto' }, 'The beautiful and vibrant campus where ideas bloom and futures are shaped in the heart of Indonesia.')
+      ),
+      // Main campus
+      div({ className: 'reveal mb-8' },
+        div({ className: 'relative rounded-3xl overflow-hidden group cursor-pointer', id: 'main-campus' },
+          img({ src: 'https://picsum.photos/seed/indonesia-campus-main/1400/600.jpg', alt: 'Campus Main', className: 'w-full h-[300px] md:h-[450px] object-cover transition-transform duration-700 group-hover:scale-105' }),
+          div({ className: 'absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent' }),
+          div({ className: 'absolute bottom-8 left-8 right-8' },
+            div({ className: 'flex items-end justify-between' },
+              div({},
+                div({ className: 'text-xs font-semibold uppercase tracking-widest text-rose-400 mb-2' }, '📍 Indonesia'),
+                h3({ className: 'text-2xl md:text-4xl font-semibold text-white' }, 'Campus of Innovation'),
+                p({ className: 'text-white/70 mt-2 text-sm md:text-base max-w-lg' }, 'A place where tradition meets modern education — one of Indonesia\'s finest academic institutions.')
+              ),
+              div({ className: 'hidden md:flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium', style: { backdropFilter: 'blur(12px)' } },
+                icon('map-pin'), span('Explore')
+              )
+            )
+          )
+        )
+      ),
+      // Gallery
+      div({ className: 'grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6' },
+        buildCampusCard('campus-library-id', 'Library', 'Knowledge Hub', '📚', .1),
+        buildCampusCard('campus-lab-id', 'Lab', 'Research Center', '🔬', .2),
+        buildCampusCard('campus-garden-id', 'Garden', 'Green Space', '🌿', .3),
+        buildCampusCard('campus-auditorium-id', 'Auditorium', 'Grand Hall', '🎭', .4),
+      ),
+      // Features
+      div({ className: 'grid md:grid-cols-3 gap-6 mt-12' },
+        ...[
+          ['book-open', 'rose', 'World-Class Library', 'Housing over 500,000 volumes and digital resources accessible around the clock for students.'],
+          ['cpu', 'orange', 'Modern Labs', 'State-of-the-art laboratories equipped with the latest technology for research and innovation.'],
+          ['trees', 'green', 'Green Campus', 'Surrounded by tropical gardens and eco-friendly architecture that inspires tranquility and focus.'],
+        ].map(([ic, color, title, desc]) =>
+          div({ className: 'reveal p-8 bg-[#fafafa] rounded-3xl border border-slate-100 hover:shadow-lg hover:scale-[1.02] transition-all duration-300' },
+            div({ className: `w-14 h-14 rounded-2xl bg-${color}-50 flex items-center justify-center mb-5` },
+              $('i', { 'data-lucide': ic, className: `w-6 h-6 text-${color}-500` })
+            ),
+            h3({ className: 'text-xl font-semibold text-slate-900 mb-2' }, title),
+            p({ className: 'text-sm text-slate-500 leading-relaxed' }, desc)
+          )
+        )
+      )
+    )
+  );
+
+  // ===== SKILLS =====
+  function buildSkill(name, pct) {
+    return div({},
+      div({ className: 'flex justify-between mb-2' },
+        span({ className: 'text-sm font-medium text-slate-700' }, name),
+        span({ className: 'text-sm font-semibold text-rose-500 skill-percent', 'data-value': pct }, '0%')
+      ),
+      div({ className: 'w-full h-2 bg-slate-100 rounded-full overflow-hidden' },
+        div({ className: 'skill-bar-fill', 'data-width': pct })
+      )
+    );
+  }
+
+  const skillsSection = section({ id: 'skills', className: 'py-24 px-6 relative overflow-hidden' },
+    div({ className: 'absolute top-0 right-0 w-72 h-72 bg-rose-100/30 rounded-full pointer-events-none', style: { filter: 'blur(100px)' } }),
+    div({ className: 'max-w-6xl mx-auto' },
+      div({ className: 'reveal text-center mb-16' },
+        div({ className: 'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold uppercase tracking-widest text-slate-600 mb-4' },
+          icon('zap'), span('Skills & Expertise')
+        ),
+        h2({ className: 'text-4xl md:text-5xl font-semibold tracking-tight text-slate-900' }, 'What I Bring')
+      ),
+      div({ className: 'grid md:grid-cols-2 gap-12' },
+        // Bars
+        div({ className: 'reveal space-y-6' },
+          ...[
+            ['JavaScript / TypeScript', 90],
+            ['React / Next.js', 85],
+            ['Node.js / Express', 80],
+            ['Python / Django', 75],
+            ['UI/UX Design', 85],
+            ['Database / SQL', 70],
+          ].map(([n, v]) => buildSkill(n, v))
+        ),
+        // Tech grid
+        div({ className: 'reveal grid grid-cols-3 gap-4' },
+          ...[
+            ['⚛️', 'React'], ['🟢', 'Node.js'], ['🐍', 'Python'],
+            ['🎨', 'Figma'], ['🐳', 'Docker'], ['☁️', 'AWS'],
+            ['📱', 'Flutter'], ['🗄️', 'PostgreSQL'], ['🔥', 'Firebase'],
+          ].map(([emoji, name]) =>
+            div({ className: 'p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center gap-2 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer group' },
+              span({ className: 'text-3xl group-hover:scale-110 transition-transform', innerHTML: emoji }),
+              span({ className: 'text-xs font-medium text-slate-600' }, name)
+            )
+          )
+        )
+      )
+    )
+  );
+
+  // ===== JOURNEY =====
+  function buildTimelineItem(year, color, title, desc) {
+    return div({ className: 'reveal relative' },
+      div({ className: 'timeline-dot', style: { background: color } }),
+      div({ className: 'p-6 bg-[#fafafa] rounded-2xl border border-slate-100 hover:shadow-md transition-shadow duration-300' },
+        div({ className: 'flex items-center gap-3 mb-3' },
+          span({ className: 'px-3 py-1 text-xs font-semibold rounded-full', style: { background: color + '18', color: color } }, year)
+        ),
+        h3({ className: 'text-lg font-semibold text-slate-900 mb-1' }, title),
+        p({ className: 'text-sm text-slate-500 leading-relaxed' }, desc)
+      )
+    );
+  }
+
+  const journeySection = section({ id: 'journey', className: 'py-24 px-6 bg-white relative' },
+    div({ className: 'max-w-4xl mx-auto' },
+      div({ className: 'reveal text-center mb-16' },
+        div({ className: 'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 border border-rose-100 text-xs font-semibold uppercase tracking-widest text-rose-600 mb-4' },
+          icon('route'), span('My Journey')
+        ),
+        h2({ className: 'text-4xl md:text-5xl font-semibold tracking-tight text-slate-900' }, 'The Path So Far')
+      ),
+      div({ className: 'relative' },
+        div({ className: 'timeline-line' }),
+        div({ className: 'space-y-12 pl-16' },
+          buildTimelineItem('2024 — Present', '#f43f5e', 'University Student — Computer Science', 'Pursuing a degree in Computer Science at a prestigious Indonesian university. Active in coding communities and tech organizations.'),
+          buildTimelineItem('2023', '#fb923c', 'Freelance Developer', 'Started taking on freelance projects, building web applications and mobile apps for local businesses and startups.'),
+          buildTimelineItem('2022', '#22c55e', 'First Programming Course', 'Discovered the world of programming and immediately fell in love. Built the first "Hello World" and never looked back.'),
+          buildTimelineItem('2021', '#6366f1', 'High School — Science Track', 'Focused on mathematics and science. Participated in national science olympiads and developed a strong analytical foundation.'),
+        )
+      )
+    )
+  );
+
+  // ===== CONTACT =====
+  const contactForm = form({ id: 'contact-form', className: 'space-y-6' },
+    div({ className: 'grid md:grid-cols-2 gap-6' },
+      div({},
+        label({ className: 'block text-sm font-medium text-slate-700 mb-2', htmlFor: 'c-name' }, 'Name'),
+        input({ type: 'text', id: 'c-name', required: '', placeholder: 'Your name', className: 'w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafafa] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all duration-200' })
+      ),
+      div({},
+        label({ className: 'block text-sm font-medium text-slate-700 mb-2', htmlFor: 'c-email' }, 'Email'),
+        input({ type: 'email', id: 'c-email', required: '', placeholder: 'your@email.com', className: 'w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafafa] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all duration-200' })
+      )
+    ),
+    div({},
+      label({ className: 'block text-sm font-medium text-slate-700 mb-2', htmlFor: 'c-subject' }, 'Subject'),
+      input({ type: 'text', id: 'c-subject', required: '', placeholder: "What's this about?", className: 'w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafafa] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all duration-200' })
+    ),
+    div({},
+      label({ className: 'block text-sm font-medium text-slate-700 mb-2', htmlFor: 'c-message' }, 'Message'),
+      textarea({ id: 'c-message', rows: '5', required: '', placeholder: 'Tell me about your project...', className: 'w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafafa] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all duration-200 resize-none' })
+    ),
+    div({ className: 'flex flex-col sm:flex-row items-center gap-4' },
+      btn({ type: 'submit', className: 'w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-medium text-base hover:bg-slate-800 active:scale-95 transition-all duration-150 shadow-lg hover:shadow-xl' },
+        icon('send'), span('Send Message')
+      ),
+      span({ className: 'text-xs text-slate-400' }, 'I\'ll reply within 24 hours')
+    )
+  );
+
+  const contactSection = section({ id: 'contact', className: 'py-24 px-6 relative overflow-hidden' },
+    div({ className: 'absolute bottom-0 left-0 w-80 h-80 bg-orange-100/30 rounded-full pointer-events-none', style: { filter: 'blur(100px)' } }),
+    div({ className: 'max-w-4xl mx-auto' },
+      div({ className: 'reveal text-center mb-16' },
+        div({ className: 'inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 border border-rose-100 text-xs font-semibold uppercase tracking-widest text-rose-600 mb-4' },
+          icon('send'), span('Contact')
+        ),
+        h2({ className: 'text-4xl md:text-5xl font-semibold tracking-tight text-slate-900' }, 'Let\'s Connect'),
+        p({ className: 'text-lg text-slate-500 mt-4' }, 'Have an idea? Let\'s make it real together.')
+      ),
+      div({ className: 'reveal' },
+        div({ className: 'gradient-border bg-white p-8 md:p-10 rounded-3xl shadow-sm' }, contactForm)
+      ),
+      // Social
+      div({ className: 'reveal mt-12 flex items-center justify-center gap-4' },
+        ...['github', 'linkedin', 'instagram', 'twitter', 'mail'].map(name =>
+          a({ href: name === 'mail' ? 'mailto:fajriansyah@example.com' : '#', className: 'w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-500 hover:text-rose-500 hover:border-rose-200 hover:shadow-md transition-all duration-200' },
+            $('i', { 'data-lucide': name, className: 'w-5 h-5' })
+          )
+        )
+      )
+    )
+  );
+
+  // ===== FOOTER =====
+  const footerEl = footer({ className: 'py-12 px-6 border-t border-slate-100' },
+    div({ className: 'max-w-7xl mx-auto' },
+      div({ className: 'flex flex-col md:flex-row items-center justify-between gap-4' },
+        div({ className: 'flex items-center gap-2' },
+          div({ className: 'w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-orange-400 flex items-center justify-center text-white font-bold text-sm', innerHTML: 'FA' }),
+          span({ className: 'font-semibold text-slate-900 text-sm' }, 'Fajriansyah Adithama')
+        ),
+        p({ className: 'text-sm text-slate-400' }, '© 2025 Fajriansyah Adithama. Crafted with ❤️ from Indonesia.'),
+        div({ className: 'flex items-center gap-1 text-sm text-slate-400' },
+          span('Made with '), span({ className: 'text-rose-500 animate-pulse', innerHTML: '❤️' }), span(' and lots of ☕')
+        )
+      )
+    )
+  );
+
+  // ===== APPEND EVERYTHING =====
+  document.body.append(toastEl, particlesContainer, mobileMenu, navEl, heroSection, aboutSection, campusSection, skillsSection, journeySection, contactSection, footerEl);
+
+  // ===== INITIALIZE LUCIDE =====
+  lucide.createIcons();
+
+  // ===== TYPEWRITER =====
+  const phrases = [
+    'A Passionate Developer 💻',
+    'An Indonesian Student 🇮🇩',
+    'A Creative Thinker 🧠',
+    'A Future Builder 🚀',
+    'Fajriansyah Adithama ✨'
+  ];
+  const typeEl = document.getElementById('typewriter');
+  let phraseIdx = 0, charIdx = 0, deleting = false, typeSpeed = 80;
+
+  function typewrite() {
+    const current = phrases[phraseIdx];
+    if (deleting) { typeEl.textContent = current.substring(0, charIdx - 1); charIdx--; typeSpeed = 40; }
+    else { typeEl.textContent = current.substring(0, charIdx + 1); charIdx++; typeSpeed = 80; }
+    if (!deleting && charIdx === current.length) { typeSpeed = 2000; deleting = true; }
+    else if (deleting && charIdx === 0) { deleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; typeSpeed = 400; }
+    setTimeout(typewrite, typeSpeed);
+  }
+  setTimeout(typewrite, 1200);
+
+  // ===== COUNTER ANIMATION =====
+  function animateCounters() {
+    document.querySelectorAll('.counter').forEach(counter => {
+      if (counter.dataset.animated) return;
+      const target = parseInt(counter.dataset.target);
+      let cur = 0; const step = Math.max(1, Math.floor(target / 40));
+      const interval = setInterval(() => {
+        cur += step; if (cur >= target) { cur = target; clearInterval(interval); }
+        counter.textContent = cur + '+';
+      }, 40);
+      counter.dataset.animated = 'true';
+    });
+  }
+  setTimeout(animateCounters, 1500);
+
+  // ===== SCROLL REVEAL =====
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        entry.target.querySelectorAll('.skill-bar-fill').forEach(bar => {
+          setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 200);
+        });
+        entry.target.querySelectorAll('.skill-percent').forEach(pct => {
+          const val = parseInt(pct.dataset.value); let cur = 0;
+          const interval = setInterval(() => { cur += 2; if (cur >= val) { cur = val; clearInterval(interval); } pct.textContent = cur + '%'; }, 20);
+        });
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ===== MOBILE MENU EVENTS =====
+  document.getElementById('mobile-toggle').addEventListener('click', openMobile);
+  document.getElementById('mobile-close').addEventListener('click', closeMobile);
+  document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', closeMobile));
+
+  // ===== CAMPUS CLICK =====
+  document.querySelectorAll('.campus-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const label = card.querySelector('.campus-label .text-sm');
+      if (label) showToast('🏛️ ' + label.textContent + ' — One of Indonesia\'s finest!');
+    });
+  });
+  document.getElementById('main-campus').addEventListener('click', () => {
+    showToast('🎓 Welcome to the Campus of Innovation, Indonesia!');
+  });
+
+  // ===== CONTACT FORM =====
+  contactForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const name = document.getElementById('c-name').value.trim();
+    const email = document.getElementById('c-email').value.trim();
+    const subject = document.getElementById('c-subject').value.trim();
+    const message = document.getElementById('c-message').value.trim();
+    if (!name || !email || !subject || !message) { showToast('⚠️ Please fill in all fields'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('⚠️ Please enter a valid email'); return; }
+    const b = this.querySelector('button[type="submit"]');
+    const orig = b.innerHTML;
+    b.innerHTML = '<svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span>Sending...</span>';
+    b.disabled = true;
+    setTimeout(() => { b.innerHTML = orig; b.disabled = false; this.reset(); showToast('✅ Message sent successfully!'); lucide.createIcons(); }, 1500);
+  });
+
+  // ===== NAV ACTIVE STATE =====
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.classList.remove('text-slate-900', 'font-semibold');
+      link.classList.add('text-slate-500');
+      if (link.getAttribute('href') === '#' + current) { link.classList.remove('text-slate-500'); link.classList.add('text-slate-900', 'font-semibold'); }
+    });
+  }, { passive: true });
+
+  // ===== SMOOTH SCROLL =====
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const t = document.querySelector(this.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+})();

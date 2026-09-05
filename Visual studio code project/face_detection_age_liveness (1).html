@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Face Analyzer — Deteksi Wajah & Estimasi Usia</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+    .header p {
+      font-size: 13px;
+      color: #888;
+    }
+
+    /* Loading */
+    #loadingSection {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+    #loadingText {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+    .bar-bg {
+      height: 5px;
+      background: #eee;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: #1D9E75;
+      border-radius: 99px;
+      transition: width 0.4s ease;
+      width: 5%;
+    }
+
+    /* Error */
+    #errorMsg {
+      display: none;
+      background: #fff2f2;
+      border: 1px solid #ffcdd2;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #c62828;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* Camera */
+    .cam-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: #111;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #videoEl {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      transform: scaleX(-1);
+    }
+    #canvasEl {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      transform: scaleX(-1);
+      pointer-events: none;
+    }
+    .placeholder {
+      text-align: center;
+      color: #666;
+    }
+    .placeholder svg {
+      width: 56px; height: 56px;
+      margin-bottom: 10px;
+      opacity: 0.4;
+    }
+    .placeholder p { font-size: 14px; }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .btn-start {
+      background: #1D9E75;
+      color: #fff;
+      border: none;
+      padding: 11px 30px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-start:hover:not(:disabled) { background: #178a65; }
+    .btn-start:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-stop {
+      background: #fff;
+      color: #555;
+      border: 1px solid #ddd;
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      display: none;
+      transition: background 0.15s;
+    }
+    .btn-stop:hover { background: #f7f7f7; }
+
+    .face-count {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      margin-bottom: 1rem;
+      min-height: 18px;
+    }
+
+    /* Results */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .metric {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .metric .label {
+      font-size: 10px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .metric .value {
+      font-size: 28px;
+      font-weight: 600;
+      color: #111;
+      line-height: 1;
+    }
+    .metric .sub {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 5px;
+    }
+    .metric-full {
+      grid-column: 1 / -1;
+    }
+
+    /* Liveness */
+    .liveness-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 99px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .pill-live { background: #e1f5ee; color: #0a6647; }
+    .pill-dead { background: #ffebee; color: #b71c1c; }
+    .pill-unknown { background: #f5f5f5; color: #666; }
+    .dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-live { background: #1D9E75; animation: pulse 1.4s infinite; }
+    .dot-dead { background: #e53935; }
+    .dot-unknown { background: #bbb; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    .info-note {
+      font-size: 11.5px;
+      color: #bbb;
+      text-align: center;
+      margin-top: 1.25rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <h1>&#x1F50D; Face Analyzer</h1>
+    <p>Deteksi wajah &middot; estimasi usia &middot; cek liveness</p>
+  </div>
+
+  <div id="loadingSection">
+    <div id="loadingText">Memuat model AI, harap tunggu...</div>
+    <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+  </div>
+
+  <div id="errorMsg"></div>
+
+  <div class="cam-wrap">
+    <div class="placeholder" id="placeholderEl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <p>Kamera akan tampil di sini</p>
+    </div>
+    <video id="videoEl" autoplay muted></video>
+    <canvas id="canvasEl"></canvas>
+  </div>
+
+  <div class="controls">
+    <button class="btn-start" id="btnStart" disabled>&#9654; Mulai Kamera</button>
+    <button class="btn-stop" id="btnStop">&#9646;&#9646; Stop</button>
+  </div>
+
+  <p class="face-count" id="faceCount"></p>
+
+  <div class="results-grid">
+    <div class="metric">
+      <div class="label">Estimasi Usia</div>
+      <div class="value" id="ageVal">—</div>
+      <div class="sub" id="ageSub">tahun</div>
+    </div>
+    <div class="metric">
+      <div class="label">Ekspresi</div>
+      <div class="value" style="font-size:20px; line-height:1.3;" id="exprVal">—</div>
+      <div class="sub" id="exprSub">&nbsp;</div>
+    </div>
+    <div class="metric metric-full">
+      <div class="label">Status Liveness</div>
+      <div style="margin-top: 6px;" id="livenessVal">
+        <span class="liveness-pill pill-unknown">
+          <span class="dot dot-unknown"></span>Menunggu kamera...
+        </span>
+      </div>
+      <div class="sub" id="livenessSub" style="margin-top: 4px;">&nbsp;</div>
+    </div>
+  </div>
+
+  <p class="info-note">
+    Semua proses berjalan 100% di perangkat Anda &mdash; tidak ada data yang dikirim ke server.<br>
+    Gerakkan wajah untuk meningkatkan akurasi deteksi liveness.
+  </p>
+</div>
+
+<!-- Gunakan vladmandic/face-api yang tidak pakai IndexedDB -->
+<script>
+(function() {
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.14/dist/face-api.js';
+  s.onload = function() { initApp(); };
+  s.onerror = function() {
+    var s2 = document.createElement('script');
+    s2.src = 'https://unpkg.com/@vladmandic/face-api@1.7.14/dist/face-api.js';
+    s2.onload = function() { initApp(); };
+    s2.onerror = function() { showError('Gagal memuat library face-api. Cek koneksi internet Anda.'); };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s);
+})();
+
+function showError(msg) {
+  var el = document.getElementById('errorMsg');
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+
+function initApp() {
+  var MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.14/model';
+
+  var videoEl      = document.getElementById('videoEl');
+  var canvasEl     = document.getElementById('canvasEl');
+  var btnStart     = document.getElementById('btnStart');
+  var btnStop      = document.getElementById('btnStop');
+  var placeholderEl= document.getElementById('placeholderEl');
+  var ageVal       = document.getElementById('ageVal');
+  var ageSub       = document.getElementById('ageSub');
+  var exprVal      = document.getElementById('exprVal');
+  var exprSub      = document.getElementById('exprSub');
+  var livenessVal  = document.getElementById('livenessVal');
+  var livenessSub  = document.getElementById('livenessSub');
+  var faceCount    = document.getElementById('faceCount');
+  var barFill      = document.getElementById('barFill');
+  var loadingText  = document.getElementById('loadingText');
+  var loadingSection = document.getElementById('loadingSection');
+
+  var stream = null;
+  var animFrame = null;
+  var livenessHistory = [];
+
+  var exprEmoji = { happy:'😄', sad:'😢', angry:'😠', fearful:'😨', disgusted:'🤢', surprised:'😲', neutral:'😐' };
+  var exprLabel = { happy:'Senang', sad:'Sedih', angry:'Marah', fearful:'Takut', disgusted:'Jijik', surprised:'Kaget', neutral:'Netral' };
+
+  // Nonaktifkan penggunaan backend yang bisa sebabkan storage access
+  faceapi.env.monkeyPatch({
+    Canvas: HTMLCanvasElement,
+    Image: HTMLImageElement,
+    ImageData: ImageData,
+    Video: HTMLVideoElement,
+    createCanvasElement: function() { return document.createElement('canvas'); },
+    createImageElement: function() { return document.createElement('img'); }
+  });
+
+  async function loadModels() {
+    try {
+      loadingText.textContent = 'Memuat model deteksi wajah (1/3)...';
+      barFill.style.width = '10%';
+      await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+
+      barFill.style.width = '45%';
+      loadingText.textContent = 'Memuat model usia & gender (2/3)...';
+      await faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL);
+
+      barFill.style.width = '80%';
+      loadingText.textContent = 'Memuat model ekspresi wajah (3/3)...';
+      await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+
+      barFill.style.width = '100%';
+      loadingText.textContent = '✓ Model siap digunakan!';
+      setTimeout(function() { loadingSection.style.display = 'none'; }, 900);
+      btnStart.disabled = false;
+    } catch(e) {
+      console.error('Model load error:', e);
+      showError('Gagal memuat model AI. Coba refresh halaman atau cek koneksi internet.');
+    }
+  }
+
+  btnStart.addEventListener('click', async function() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+      });
+      videoEl.srcObject = stream;
+      videoEl.style.display = 'block';
+      placeholderEl.style.display = 'none';
+      btnStart.style.display = 'none';
+      btnStop.style.display = '';
+      videoEl.addEventListener('loadeddata', startDetection, { once: true });
+    } catch(e) {
+      showError('Tidak bisa mengakses kamera. Pastikan izin kamera diberikan di browser, lalu coba lagi.');
+    }
+  });
+
+  btnStop.addEventListener('click', function() {
+    if (stream) { stream.getTracks().forEach(function(t) { t.stop(); }); stream = null; }
+    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+    videoEl.style.display = 'none';
+    placeholderEl.style.display = '';
+    btnStop.style.display = 'none';
+    btnStart.style.display = '';
+    var ctx = canvasEl.getContext('2d');
+    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+    resetResults();
+  });
+
+  function resetResults() {
+    ageVal.textContent = '—'; ageSub.textContent = 'tahun';
+    exprVal.textContent = '—'; exprSub.innerHTML = '&nbsp;';
+    livenessVal.innerHTML = '<span class="liveness-pill pill-unknown"><span class="dot dot-unknown"></span>Menunggu...</span>';
+    livenessSub.innerHTML = '&nbsp;';
+    faceCount.textContent = '';
+    livenessHistory = [];
+  }
+
+  function startDetection() {
+    var detect = async function() {
+      if (!stream) return;
+      try {
+        var w = videoEl.videoWidth;
+        var h = videoEl.videoHeight;
+        if (!w || !h) { animFrame = requestAnimationFrame(detect); return; }
+
+        canvasEl.width = w;
+        canvasEl.height = h;
+
+        var detections = await faceapi
+          .detectAllFaces(videoEl, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.45 }))
+          .withAgeAndGender()
+          .withFaceExpressions();
+
+        var ctx = canvasEl.getContext('2d');
+        ctx.clearRect(0, 0, w, h);
+
+        if (!detections || detections.length === 0) {
+          faceCount.textContent = 'Tidak ada wajah terdeteksi — hadapkan wajah ke kamera';
+          resetResults();
+          animFrame = requestAnimationFrame(detect);
+          return;
+        }
+
+        faceCount.textContent = detections.length + ' wajah terdeteksi';
+
+        detections.forEach(function(det, i) {
+          var box = det.detection.box;
+          var age = Math.round(det.age);
+          var expressions = det.expressions;
+          var entries = Object.entries(expressions).sort(function(a,b){ return b[1]-a[1]; });
+          var topExpr = entries[0];
+          var liveness = computeLiveness(expressions);
+
+          // Gambar bounding box
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = liveness.alive ? '#1D9E75' : '#e53935';
+          ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+          // Label bar di atas box
+          var tagH = 28;
+          ctx.fillStyle = liveness.alive ? 'rgba(29,158,117,0.9)' : 'rgba(229,57,53,0.9)';
+          ctx.fillRect(box.x, box.y - tagH, box.width, tagH);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 13px system-ui, sans-serif';
+          ctx.textBaseline = 'middle';
+          var txt = '~' + age + ' th · ' + (liveness.alive ? '🟢 HIDUP' : '🔴 Tidak Pasti');
+          ctx.fillText(txt, box.x + 8, box.y - tagH / 2);
+
+          // Update panel utama hanya untuk wajah pertama
+          if (i === 0) {
+            ageVal.textContent = age;
+            ageSub.textContent = 'tahun (estimasi)';
+            exprVal.textContent = (exprEmoji[topExpr[0]] || '') + ' ' + (exprLabel[topExpr[0]] || topExpr[0]);
+            exprSub.textContent = Math.round(topExpr[1] * 100) + '% keyakinan';
+            renderLiveness(liveness);
+          }
+        });
+      } catch(e) {
+        console.warn('Detection error:', e);
+      }
+      animFrame = requestAnimationFrame(detect);
+    };
+    detect();
+  }
+
+  function computeLiveness(expressions) {
+    var happy = expressions.happy || 0;
+    var sad = expressions.sad || 0;
+    var angry = expressions.angry || 0;
+    var fearful = expressions.fearful || 0;
+    var surprised = expressions.surprised || 0;
+    var disgusted = expressions.disgusted || 0;
+    var neutral = expressions.neutral || 0;
+
+    var activityScore = happy + sad + angry + fearful + surprised + disgusted;
+    var exprCount = Object.values(expressions).filter(function(v){ return v > 0.05; }).length;
+
+    livenessHistory.push(activityScore);
+    if (livenessHistory.length > 25) livenessHistory.shift();
+
+    var maxA = Math.max.apply(null, livenessHistory);
+    var minA = Math.min.apply(null, livenessHistory);
+    var variance = maxA - minA;
+    var avg = livenessHistory.reduce(function(a,b){ return a+b; }, 0) / livenessHistory.length;
+
+    var score = 0;
+    var reasons = [];
+    if (activityScore > 0.12)                    { score += 30; reasons.push('ekspresi aktif'); }
+    if (variance > 0.09 && livenessHistory.length >= 10) { score += 35; reasons.push('ada gerakan wajah'); }
+    if (exprCount >= 2)                           { score += 15; reasons.push('variasi ekspresi'); }
+    if (avg > 0.06)                               { score += 20; reasons.push('aktivitas stabil'); }
+
+    score = Math.min(score, 100);
+    return {
+      alive: score >= 45,
+      confidence: score,
+      label: score >= 45 ? 'HIDUP' : (score >= 20 ? 'Tidak Pasti' : 'Tidak Terdeteksi'),
+      reasons: reasons
+    };
+  }
+
+  function renderLiveness(liveness) {
+    var html, sub;
+    if (liveness.alive) {
+      html = '<span class="liveness-pill pill-live"><span class="dot dot-live"></span>✓ Hidup (Live)</span>';
+      sub = 'Keyakinan ' + liveness.confidence + '% · ' + (liveness.reasons.join(', ') || '-');
+    } else if (liveness.confidence >= 20) {
+      html = '<span class="liveness-pill pill-unknown"><span class="dot dot-unknown"></span>Tidak Pasti</span>';
+      sub = 'Gerakkan wajah atau ubah ekspresi untuk verifikasi';
+    } else {
+      html = '<span class="liveness-pill pill-dead"><span class="dot dot-dead"></span>Tidak Terdeteksi Hidup</span>';
+      sub = 'Kemungkinan foto/gambar statis · keyakinan sangat rendah';
+    }
+    livenessVal.innerHTML = html;
+    livenessSub.textContent = sub;
+  }
+
+  loadModels();
+}
+</script>
+</body>
+</html>

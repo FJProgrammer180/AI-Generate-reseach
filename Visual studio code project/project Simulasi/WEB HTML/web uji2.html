@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kompleks Web Fajriansyah Adithama</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&display=swap');
+    body {
+      margin: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: transparent;
+      color: #223;
+      position: relative;
+      min-height: 100vh;
+      transition: background .4s;
+      overflow-x: hidden;
+    }
+
+    /* ======= Animated Gradient Blobs Background ======= */
+    .bg-blobs {
+      position: fixed;
+      z-index: 0;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .blob {
+      position: absolute;
+      filter: blur(62px);
+      opacity: 0.50;
+      border-radius: 48% 52% 50% 50%;
+      animation: moveBlob 18s infinite linear alternate;
+      z-index: 0;
+    }
+    .blob1 { background: #5e72e4; width: 360px; height: 360px; left: -120px; top: -50px; animation-delay:0s;}
+    .blob2 { background: #29e3cc; width: 300px; height: 300px; right: -110px; top: 80px; animation-delay:3s;}
+    .blob3 { background: #ffe771; width: 265px; height: 265px; left: 40vw; top: 74vh; animation-delay:5s;}
+    .blob4 { background: #f767c4; width: 210px; height: 210px; left: 70vw; top: 55vh; animation-delay:2s;}
+    @keyframes moveBlob {
+      0% {
+        transform: scale(1) translateY(0px) translateX(0px) rotate(0deg);
+        border-radius: 44% 56% 60% 40%/49% 55% 45% 51%;
+      }
+      50% {
+        transform: scale(1.15) translateY(-30px) translateX(30px) rotate(160deg);
+        border-radius: 53% 47% 50% 50%/55% 48% 52% 45%;
+      }
+      100% {
+        transform: scale(0.98) translateY(30px) translateX(-10px) rotate(340deg);
+        border-radius: 44% 56% 60% 40%/49% 55% 45% 51%;
+      }
+    }
+
+    header {
+      text-align: center;
+      padding: 42px 10px 25px 10px;
+      background: linear-gradient(90deg,#0054a5ee,#73d2ffcc 75%);
+      color: white;
+      box-shadow: 0 4px 22px #0002;
+      position: relative;
+      z-index:10;
+    }
+    .animated-name {
+      font-size: 2.6em;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ffd600, #0075ac, #26fea0, #0054a5, #e08bff);
+      background-size: 200% auto;
+      color: #fff;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradmove 7s linear infinite;
+      margin-bottom:10px;
+      position:relative;
+      z-index:1;
+    }
+    @keyframes gradmove {
+      to{background-position:200%}
+    }
+    .subtitle {
+      font-size: 1.15em;
+      opacity: 0.82;
+      margin-bottom: 0;
+    }
+    /* ======= ONLINE STATUS ======= */
+    .online-status {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      font-size: 1.07em;
+      font-weight: 600;
+      margin-top: 19px;
+      margin-bottom: -8px;
+      z-index: 11;
+    }
+    .online-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #09e427;
+      display: inline-block;
+      box-shadow: 0 3px 12px #1bc18a8a;
+      border:2px solid #e3faea;
+      margin-right: 2.5px;
+      transition:.2s;
+    }
+    .offline-dot {
+      background: #e42709;
+      box-shadow: 0 3px 12px #e77e7ead;
+      border:2px solid #fcf5ed;
+    }
+    .ig-link {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      margin:14px auto;
+      z-index:15;
+    }
+    .ig-link a {
+      color: #fff;
+      background: linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);
+      padding: 8.5px 25px 8.5px 15px;
+      border-radius: 16px;
+      font-size: 1em;
+      text-decoration: none;
+      font-weight: bold;
+      display:inline-block;
+      transition:.16s;
+      box-shadow: 0 4px 19px #ee2a7b16;
+      position:relative;
+      margin-left:4px;
+    }
+    .ig-link a:hover {
+      letter-spacing: .7px;
+      background: linear-gradient(90deg,#6228d7 60%,#ee2a7b 90%);
+      color:#ffd600;
+      transform:scale(1.06);
+      box-shadow: 0 7px 24px #f9ce342b;
+    }
+    .ig-link img {
+      width: 32px; height:32px;
+      margin-right: 11px;
+      border-radius: 8px;
+      background: #fff;
+      vertical-align: middle;
+    }
+
+    .biografi-section {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      margin: 60px auto 35px;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 0px 32px #0080ec09;
+      padding: 42px 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      z-index:3;
+      position:relative;
+    }
+    .biografi-section img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      box-shadow: 0 4px 24px #0077c220;
+      object-fit: cover;
+      border: 4px solid #8be0ff2a;
+      background: #e0eafc;
+    }
+    .bio-desc {
+      max-width: 520px;
+      font-size: 1.12em;
+      color: #265;
+      line-height: 1.7;
+    }
+    .logo-bar {
+      display: flex;
+      gap: 38px;
+      justify-content: center;
+      margin: 32px auto 0;
+      flex-wrap: wrap;
+      z-index:3;
+      position:relative;
+    }
+    .logo-bar .logo-card {
+      background: #d9edfe;
+      border-radius: 16px;
+      padding: 17px 15px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 2px 18px #0075ac0c;
+      min-width: 110px;
+      max-width: 160px;
+      transition: .14s;
+    }
+    .logo-bar .logo-card:hover {
+      transform: translateY(-7px) scale(1.045);
+      box-shadow: 0 7px 22px #0054a530;
+    }
+    .logo-card img {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+      margin-bottom: 11px;
+      border-radius: 8px;
+      background: white;
+    }
+    .logo-card p {
+      margin: 3.5px 0 2px 0;
+      font-size: .97em;
+      color: #236;
+      text-align: center;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 42px;
+      color: #006f8b;
+      letter-spacing: 1px;
+      z-index:2;
+      position:relative;
+      background:rgba(255,255,255,.47);
+      display:inline-block;
+      width:100%;
+    }
+    .lang-list {
+      margin: 45px auto 28px;
+      max-width: 1040px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(308px, 1fr));
+      gap: 26px;
+      align-items: stretch;
+      z-index:3;
+      position:relative;
+    }
+    .lang-card {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 3px 21px #56bcef13;
+      padding: 25px 21px 12px 25px;
+      display: flex;
+      gap:18px;
+      align-items: flex-start;
+      transition: .18s;
+      min-width:0;
+      border: 1.5px solid #eef7fc;
+    }
+    .lang-card:hover {
+      box-shadow:0 10px 40px #3974eb17;
+      border-color:#b1ebff;
+      transform:translateY(-3px);
+    }
+    .lang-logo {
+      width: 52px;
+      min-width:52px;
+      height: 52px;
+      border-radius: 10px;
+      background: #e3f6ff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 1px 8px #39b6a613;
+      object-fit:contain;
+    }
+    .lang-content {
+      flex:1;
+    }
+    .lang-content h3 {
+      margin: 0 0 8px;
+      font-size: 1.12em;
+      color:#0077b6;
+    }
+    .lang-content p {
+      margin: 0 0 3px 0;
+      color: #284a6d;
+      font-size: .98em;
+      letter-spacing: 0.01em;
+    }
+    footer {
+      text-align: center;
+      padding: 18px 10px;
+      margin-top: 40px;
+      background: linear-gradient(90deg,#5e72e4 30%,#39b69a 75%);
+      color: #fff;
+      border-radius: 0 0 18px 18px;
+      font-size:1em;
+      z-index:12;position:relative;
+    }
+
+    /* ==== LOGIN AUTH DIALOG ==== */
+    #auth-modal {
+      position: fixed;
+      top: 0; left:0;
+      width: 100vw; height: 100vh;
+      background: #1e2736ea;
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:.3s;
+    }
+    #auth-modal .auth-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 38px 40px;
+      text-align: center;
+      box-shadow: 0 6px 28px 4px #001c232f;
+      max-width: 330px;
+    }
+    #auth-modal input {
+      width: 93%;
+      padding: 13px 9px;
+      margin: 13px 0 20px;
+      border-radius: 7px;
+      border: 1.1px solid #b0bedb;
+      background: #f4f7fe;
+      font-size: 1.05em;
+      outline: none;
+      color: #3e4969;
+      transition: border .16s;
+    }
+    #auth-modal input:focus {
+      border-color: #5e72e4;
+      background: #e3ebfa;
+    }
+    #auth-modal button {
+      background: linear-gradient(90deg,#5e72e4,#39b69a);
+      color:white;
+      border:none;
+      border-radius:6px;
+      font-size:1.1em;
+      padding:11px 30px;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 600;
+      transition: background 0.19s;
+      cursor: pointer;
+      margin-bottom: 9px;
+    }
+    #auth-modal .error-msg {
+      color: #c82333;
+      font-size: .98em;
+      margin-bottom: 7px;
+      min-height: 24px;
+      display: block;
+    }
+    @media (max-width:700px){
+      .main-wrapper, .biografi-section {padding: 18px 6px;}
+      .biografi-section{flex-direction:column;align-items:stretch;}
+      .bio-desc{max-width:96vw;}
+      .lang-list{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));}
+      header{padding:22px 5px 9px;}
+      .animated-name{font-size:1.15em;}
+      .logo-bar{gap:17px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- BACKGROUND EFFECT -->
+  <div class="bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div id="auth-modal">
+    <form class="auth-card" id="login-form" autocomplete="off" onsubmit="return false">
+      <h2>Masuk ke Web</h2>
+      <span class="error-msg" id="login-error">&nbsp;</span>
+      <input type="email" id="email-input" required autocomplete="off" placeholder="Masukkan email Anda"/>
+      <button type="submit">Masuk</button>
+      <div style="font-size:.93em;color:#709;opacity:.65;margin-top:15px;">
+        Hanya akun admin dapat akses fitur spesial.<br>
+        (Contoh: fajriansyah@gmail.com)
+      </div>
+    </form>
+  </div>
+  <!-- STATUS ONLINE/OFFLINE KHUSUS ADMIN -->
+  <div class="online-status" id="online-status">
+    <span class="online-dot" id="online-dot"></span>
+    <span id="online-text">Koneksi: <b>Online</b></span>
+  </div>
+  <!-- LINK IG KHUSUS ADMIN -->
+  <div class="ig-link" id="ig-link">
+    <a href="https://instagram.com/Fajriansyah.adithama" rel="noopener" target="_blank">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="IG">
+      @Fajriansyah.adithama
+    </a>
+  </div>
+  <header>
+    <div class="animated-name" id="namaku">Fajriansyah Adithama</div>
+    <div class="subtitle">Web Biografi & Penjelasan Bahasa Pemrograman</div>
+    <div style="position:absolute;right:18px;top:16px;opacity:.13;font-size:2.5em;">&lt;/&gt;</div>
+  </header>
+
+  <section class="biografi-section" data-aos="fade-up">
+    <img id="profile-foto" src="https://i.ibb.co/njWQPN8/avatar-example.jpg" alt="Foto profil Fajriansyah Adithama">
+    <div class="bio-desc">
+      <h3 style="margin-top:0">Biografi</h3>
+      <p>
+        Halo! Saya <b>Fajriansyah Adithama</b>, seorang penggemar dunia teknologi, web, dan komputer. Saya menyenangi pembelajaran pemrograman baik untuk web maupun aplikasi, serta aktif berbagi ilmu dan semangat inovasi di komunitas kampus & luar. <br>
+        Saya percaya teknologi dan kreativitas akan membawa perubahan positif bagi bangsa. Dream big, stay curious, never stop learning!
+      </p>
+    </div>
+  </section>
+
+  <h2 data-aos="fade-left">Logo Universitas & Logo Unik</h2>
+  <div class="logo-bar">
+    <div class="logo-card" data-aos="zoom-in">
+      <img src="https://upload.wikimedia.org/wikipedia/id/0/0a/Institut_Teknologi_Sepuluh_Nopember.png" alt="Logo ITS">
+      <b>ITS</b>
+      <p>Institut Teknologi Sepuluh Nopember</p>
+    </div>
+    <div class="logo-card" data-aos="zoom-in" data-aos-delay="150">
+      <img src="https://i.imgur.com/H2YgHXh.png" alt="Logo Unik" style="background:#222;">
+      <b>Logo Unik</b>
+      <p>Logo generik modern (misal branding, komunitas, dll)</p>
+    </div>
+  </div>
+
+  <h2 data-aos="fade-right">Penjelasan Bahasa Pemrograman Populer</h2>
+  <div class="lang-list">
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="50">
+      <span class="lang-logo"><img style="width:44px;" src="https://www.python.org/static/opengraph-icon-200x200.png" alt="Python"></span>
+      <div class="lang-content">
+        <h3>Python</h3>
+        <p>Python adalah bahasa pemrograman populer yang mudah dibaca, cocok untuk data science, AI, otomasi, web, dan banyak lagi. Sintaksnya ringkas, cocok untuk pemula maupun profesional.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="100">
+      <span class="lang-logo"><img style="width:37px;" src="https://cdn-icons-png.flaticon.com/512/5968/5968292.png" alt="JavaScript"></span>
+      <div class="lang-content">
+        <h3>JavaScript (JS)</h3>
+        <p>JavaScript adalah bahasa utama dalam pengembangan web untuk membuat halaman interaktif, SPA, hingga backend (dengan Node.js).</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="150">
+      <span class="lang-logo"><img style="width:36px;" src="https://cdn-icons-png.flaticon.com/512/888/888859.png" alt="HTML"></span>
+      <div class="lang-content">
+        <h3>HTML</h3>
+        <p>HTML (HyperText Markup Language) adalah fondasi dari semua situs web, digunakan untuk membuat struktur halaman web.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="200">
+      <span class="lang-logo"><img style="width:38px;" src="https://cdn-icons-png.flaticon.com/512/732/732190.png" alt="CSS"></span>
+      <div class="lang-content">
+        <h3>CSS</h3>
+        <p>CSS (Cascading Style Sheets) digunakan untuk mendesain dan memperindah tampilan web, seperti warna, layout, animasi, dsb.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="250">
+      <span class="lang-logo"><img style="width:39px;" src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" alt="C"></span>
+      <div class="lang-content">
+        <h3>C</h3>
+        <p>C adalah bahasa dasar bagi banyak pemrograman modern (OS & sistem embedded), sintaks sederhana, performa tinggi.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="300">
+      <span class="lang-logo"><img style="width:39px;" src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg" alt="C++"></span>
+      <div class="lang-content">
+        <h3>C++</h3>
+        <p>C++ merupakan pengembangan dari C, mendukung OOP, sering digunakan pada aplikasi performa tinggi seperti game/engine.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="350">
+      <span class="lang-logo"><img style="width:37px;" src="https://cdn-icons-png.flaticon.com/512/5968/5968282.png" alt="Java"></span>
+      <div class="lang-content">
+        <h3>Java</h3>
+        <p>Java populer untuk aplikasi enterprise, mobile (Android), dan web backend, dengan prinsip “tulis sekali, jalan di mana saja”.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="400">
+      <span class="lang-logo"><img style="width:37px;background:#fff;border-radius:10px;" src="https://cdn.worldvectorlogo.com/logos/php-1.svg" alt="PHP"></span>
+      <div class="lang-content">
+        <h3>PHP</h3>
+        <p>PHP adalah bahasa server-side, banyak digunakan untuk membuat web dinamis dan populer di sistem manajemen konten seperti WordPress.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="450">
+      <span class="lang-logo"><img style="width:39px;" src="https://seeklogo.com/images/R/rust-programming-language-logo-47E0DF1D1D-seeklogo.com.png" alt="Rust"></span>
+      <div class="lang-content">
+        <h3>Rust</h3>
+        <p>Rust adalah bahasa sistem modern yang aman dan cepat, populer untuk aplikasi performa tinggi tanpa bug memory.</p>
+      </div>
+    </div>
+  </div>
+  <footer>
+    &copy; 2026 Fajriansyah Adithama – Web Programming & Biografi | All Rights Reserved
+  </footer>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // ==========================================
+    // LOGIN MODAL (Only allow one email for admin!)
+    // ==========================================
+    const ADMIN_EMAIL = "fajriansyah@gmail.com";
+    const authModal = document.getElementById('auth-modal');
+    const loginForm = document.getElementById('login-form');
+    const emailInput = document.getElementById('email-input');
+    const loginError = document.getElementById('login-error');
+    let userIsAdmin = false;
+
+    // Check login session on load
+    let userEmail = localStorage.getItem("userEmail") || "";
+    if (userEmail) {
+      authModal.style.display = "none";
+      checkAdmin(userEmail);
+    }
+
+    loginForm.onsubmit = function() {
+      let email = emailInput.value.trim().toLowerCase();
+      if(!email){
+        loginError.textContent="Email wajib diisi!";
+        return false;
+      }
+      localStorage.setItem("userEmail", email);
+      authModal.style.display = "none";
+      checkAdmin(email);
+      return false;
+    }
+    function checkAdmin(email) {
+      if (email === ADMIN_EMAIL) {
+        userIsAdmin = true;
+        showSpecialFeatures();
+      }
+    }
+    // Double protection: block wheel scroll before login
+    document.body.addEventListener("wheel", function(e){
+      if(authModal.style.display!=="none") e.preventDefault();
+    }, {passive:false});
+
+    // ==========================================
+    // KHUSUS ADMIN: TAMPILKAN FITUR KHUSUS!
+    // ==========================================
+    function showSpecialFeatures() {
+      // Tampilkan online status
+      document.getElementById("online-status").style.display = "flex";
+      // Tampilkan link IG
+      document.getElementById("ig-link").style.display = "flex";
+    }
+
+    // ==========================================
+    // ANIMASI NAMA
+    // ==========================================
+    function typingEffect(el, text, speed) {
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          el.innerHTML = text.slice(0, i+1) + '<span style="border-right:2px solid #ffd600;padding-left:1.5px"></span>';
+          i++;
+          setTimeout(type, speed);
+        } else {
+          el.textContent = text;
+        }
+      }
+      el.textContent = "";
+      type();
+    }
+    setTimeout(() => typingEffect(document.getElementById('namaku'), 'Fajriansyah Adithama', 54), 80);
+    // ==========================================
+    // ONLINE/OFFLINE DETECTOR KHUSUS ADMIN
+    // ==========================================
+    function updateOnlineStatus() {
+      if (!userIsAdmin) return;
+      const dot = document.getElementById('online-dot');
+      const txt = document.getElementById('online-text');
+      if (navigator.onLine) {
+        dot.classList.remove('offline-dot');
+        txt.innerHTML = 'Koneksi: <b style="color:#35a837">Online</b>';
+      } else {
+        dot.classList.add('offline-dot');
+        txt.innerHTML = 'Koneksi: <b style="color:#e42709">Offline</b>';
+      }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    setInterval(updateOnlineStatus, 1200);
+
+    // ==========================================
+    // ANIMATE-ON-SCROLL LIBRARY
+    // ==========================================
+    AOS.init({ duration: 800, offset: 80 });
+
+    // ==========================================
+    // FOTO PROFIL: boleh diganti link di bawah
+    // ==========================================
+    //document.getElementById('profile-foto').src = "URL_FOTO_KAMU";
+  </script>
+</body>
+</html>

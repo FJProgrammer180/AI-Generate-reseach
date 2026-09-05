@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Komplex Web Dashboard Demo</title>
+  <style>
+    :root {
+      --sidebar-width: 220px;
+      --primary: #5e72e4;
+      --background: #f6f9fc;
+      --background-dark: #1a1a2e;
+      --text: #1a202c;
+      --text-dark: #f6f9fc;
+      --card: #fff;
+      --card-dark: #232446;
+      --transition: 0.3s;
+    }
+    [data-theme='dark'] {
+      --background: var(--background-dark);
+      --text: var(--text-dark);
+      --card: var(--card-dark);
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      transition: background var(--transition), color var(--transition);
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1rem 1rem 1rem;
+      transition: width var(--transition);
+      min-width: 60px;
+    }
+    .sidebar.collapsed {
+      width: 60px;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+    .sidebar h1 {
+      font-size: 1.4rem;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      transition: opacity var(--transition);
+    }
+    .sidebar.collapsed h1 {
+      opacity: 0;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex: 1;
+    }
+    .sidebar ul li {
+      margin: 1.2rem 0;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 1rem;
+      white-space: nowrap;
+      transition: background var(--transition);
+      padding: 0.5rem 0.8rem;
+      border-radius: 5px;
+    }
+    .sidebar ul li:hover {
+      background: rgba(255,255,255,0.09);
+    }
+    .sidebar .toggle-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: margin var(--transition);
+    }
+    .content {
+      flex: 1;
+      padding: 2rem;
+      background: var(--background);
+      transition: background var(--transition), color var(--transition);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .clock {
+      font-size: 1.2rem;
+      font-family: monospace;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .theme-toggle {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background var(--transition);
+    }
+    .main-card {
+      background: var(--card);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-card h2 {
+      margin-top: 0;
+    }
+    .search-bar {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+    }
+    .search-bar input {
+      width: 260px;
+      padding: 0.5rem 1rem;
+      border-radius: 7px;
+      border: 1px solid #cfd8dc;
+      outline: none;
+      font-size: 1rem;
+      margin-right: 1rem;
+      background: var(--background);
+      color: var(--text);
+      transition: border var(--transition), background var(--transition), color var(--transition);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th, .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    .data-table th {
+      background: #f0f2fa;
+    }
+    [data-theme='dark'] .data-table th {
+      background: #232446;
+    }
+    .data-table tr:hover {
+      background: #f3f8fd;
+    }
+    [data-theme='dark'] .data-table tr:hover {
+      background: #232446;
+    }
+    @media (max-width: 820px) {
+      .container { flex-direction: column; }
+      .sidebar { flex-direction: row; width: 100%; min-width: 0; height: 60px; padding: 0 1rem; }
+      .sidebar.collapsed { width: 100%; }
+      .sidebar ul { flex-direction: row; gap: 1rem; }
+      .sidebar ul li { margin: 0 0.6rem; }
+      .sidebar h1 { display: none; }
+    }
+    @media (max-width: 500px) {
+      .main-card { padding: 1rem; }
+      .toolbar { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .search-bar input { width: 100px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <button class="toggle-btn" title="Toggle Sidebar" id="sidebar-toggle">☰</button>
+      <h1>Dashboard</h1>
+      <ul>
+        <li><span>🏠</span>&nbsp;<span class="nav-label">Home</span></li>
+        <li><span>📊</span>&nbsp;<span class="nav-label">Reports</span></li>
+        <li><span>⚙️</span>&nbsp;<span class="nav-label">Settings</span></li>
+      </ul>
+    </nav>
+    <main class="content">
+      <div class="toolbar">
+        <div class="clock" id="clock"></div>
+        <button class="theme-toggle" id="theme-btn">🌙 Dark Mode</button>
+      </div>
+      <section class="main-card">
+        <h2>User Data Table</h2>
+        <div class="search-bar">
+          <input type="text" id="search" placeholder="Search name, email..." />
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Location</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- JavaScript will inject table rows here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    // Dark / Light Mode Toggle
+    const themeBtn = document.getElementById('theme-btn');
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      themeBtn.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+    themeBtn.onclick = () => {
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      setTheme(theme);
+    };
+    // Persist theme
+    window.onload = () => {
+      setTheme(localStorage.getItem('theme') || 'light');
+    };
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      themeBtn.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+      localStorage.setItem('theme', theme);
+    }
+
+    // Live Clock
+    const clock = document.getElementById('clock');
+    function updateClock() {
+      const now = new Date();
+      clock.textContent = now.toLocaleString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Collapsible sidebar
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('sidebar-toggle').onclick = () => {
+      sidebar.classList.toggle('collapsed');
+      // Hide/show nav-labels
+      document.querySelectorAll('.nav-label').forEach((el) => {
+        el.style.display = sidebar.classList.contains('collapsed') ? 'none' : '';
+      });
+    };
+
+    // Demo Data
+    const USERS = [
+      { name: 'Alice Smith', email: 'alice@mail.com', status: 'Active', location: 'New York' },
+      { name: 'Bob Johnson', email: 'bob@mail.com', status: 'Inactive', location: 'London' },
+      { name: 'Charlie Davis', email: 'charlie@mail.com', status: 'Active', location: 'Berlin' },
+      { name: 'Dana Lee', email: 'dana@mail.com', status: 'Pending', location: 'Toronto' },
+      { name: 'Eve Kim', email: 'eve@mail.com', status: 'Active', location: 'Seoul' },
+      { name: 'Frank Moore', email: 'frank@mail.com', status: 'Inactive', location: 'Paris' },
+      { name: 'Gina Ford', email: 'gina@mail.com', status: 'Active', location: 'San Francisco' },
+      { name: 'Howard King', email: 'howard@mail.com', status: 'Pending', location: 'Tokyo' },
+      { name: 'fajriansyah adithama', email: 'fajri@mail.com', status: 'Active every day', location: 'Surabaya' }
+    ];
+
+    // Render table
+    const tbody = document.querySelector('#data-table tbody');
+    function renderTable(data) {
+      tbody.innerHTML = '';
+      for (const user of data) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${user.name}</td><td>${user.email}</td><td>${user.status}</td><td>${user.location}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+    renderTable(USERS);
+
+    // Search/filter
+    document.getElementById('search').oninput = function() {
+      const q = this.value.trim().toLowerCase();
+      const filtered = USERS.filter(user =>
+        user.name.toLowerCase().includes(q) ||
+        user.email.toLowerCase().includes(q) ||
+        user.status.toLowerCase().includes(q) ||
+        user.location.toLowerCase().includes(q)
+      );
+      renderTable(filtered);
+    };
+  </script>
+</body>
+</html>

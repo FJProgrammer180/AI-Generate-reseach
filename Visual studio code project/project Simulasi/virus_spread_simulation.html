@@ -1,0 +1,172 @@
+
+<style>
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+canvas{display:block;border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);}
+.ctrl{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-secondary);}
+.ctrl span{min-width:32px;font-size:13px;font-weight:500;color:var(--color-text-primary);text-align:right;}
+.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;flex-shrink:0;vertical-align:middle;}
+</style>
+
+<h2 class="sr-only">Simulasi penyebaran virus model SIR interaktif dengan grid populasi dan grafik epidemi real-time.</h2>
+
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,260px);gap:14px;align-items:start;">
+<div>
+<canvas id="gridC" width="380" height="380" style="width:100%;height:auto;"></canvas>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;">
+<div style="font-size:18px;font-weight:500;color:#378ADD;" id="sc">0</div>
+<div style="font-size:11px;color:var(--color-text-secondary);">Rentan (S)</div>
+</div>
+<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;">
+<div style="font-size:18px;font-weight:500;color:#E24B4A;" id="ic">0</div>
+<div style="font-size:11px;color:var(--color-text-secondary);">Terinfeksi (I)</div>
+</div>
+<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;">
+<div style="font-size:18px;font-weight:500;color:#639922;" id="rc">0</div>
+<div style="font-size:11px;color:var(--color-text-secondary);">Sembuh (R)</div>
+</div>
+<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;">
+<div style="font-size:18px;font-weight:500;color:#888780;" id="dc">0</div>
+<div style="font-size:11px;color:var(--color-text-secondary);">Meninggal (D)</div>
+</div>
+</div>
+<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;display:flex;align-items:baseline;gap:10px;">
+<span style="font-size:12px;color:var(--color-text-secondary);">R₀</span>
+<span style="font-size:22px;font-weight:500;" id="r0v">—</span>
+<span style="font-size:11px;color:var(--color-text-secondary);" id="r0lbl"></span>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;">
+<div class="ctrl"><label style="min-width:96px;">Transmisi β</label><input type="range" id="beta" min="1" max="10" value="4" step="1" style="flex:1;"><span id="bv">4</span></div>
+<div class="ctrl"><label style="min-width:96px;">Sembuh γ</label><input type="range" id="gam" min="1" max="10" value="3" step="1" style="flex:1;"><span id="gv">3</span></div>
+<div class="ctrl"><label style="min-width:96px;">Mortalitas %</label><input type="range" id="mort" min="0" max="30" value="5" step="1" style="flex:1;"><span id="mv">5</span></div>
+<div class="ctrl"><label style="min-width:96px;">Vaksinasi %</label><input type="range" id="vacc" min="0" max="80" value="0" step="5" style="flex:1;"><span id="vv">0</span></div>
+</div>
+<div style="display:flex;gap:6px;">
+<button id="btnStart" style="flex:1;font-size:13px;padding:7px 0;" onclick="toggleSim()"><i class="ti ti-player-play" aria-hidden="true"></i> Mulai</button>
+<button style="flex:1;font-size:13px;padding:7px 0;" onclick="resetSim()"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px 10px;font-size:11px;color:var(--color-text-secondary);">
+<span><span class="legend-dot" style="background:#378ADD;"></span>Rentan</span>
+<span><span class="legend-dot" style="background:#E24B4A;"></span>Terinfeksi</span>
+<span><span class="legend-dot" style="background:#639922;"></span>Sembuh</span>
+<span><span class="legend-dot" style="background:#888780;"></span>Meninggal</span>
+<span><span class="legend-dot" style="background:#7F77DD;"></span>Divaksin</span>
+</div>
+</div>
+</div>
+
+<div style="margin-top:12px;">
+<canvas id="chartC" height="110" style="width:100%;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);"></canvas>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);padding:2px 2px 0;">
+<span>Hari 0</span><span id="dayLbl">Hari 0</span>
+</div>
+
+<script>
+(function(){
+const COLS=50,ROWS=50,S=0,I=1,R=2,D=3,V=4;
+const CLR=[[55,138,221],[226,75,74],[99,153,34],[136,135,128],[127,119,221]];
+let grid,next,simTmr,day,hist;
+
+const gC=document.getElementById('gridC'),gc=gC.getContext('2d');
+const cC=document.getElementById('chartC'),cc=cC.getContext('2d');
+
+function getP(id){return +document.getElementById(id).value;}
+
+function initGrid(){
+  grid=new Uint8Array(COLS*ROWS);
+  next=new Uint8Array(COLS*ROWS);
+  const vp=getP('vacc');
+  const idx=[...Array(COLS*ROWS).keys()];
+  for(let i=idx.length-1;i>0;i--){const j=0|Math.random()*(i+1);[idx[i],idx[j]]=[idx[j],idx[i]];}
+  const nv=Math.floor(COLS*ROWS*vp/100);
+  for(let i=0;i<nv;i++)grid[idx[i]]=V;
+  let seeded=false;
+  for(let k=0;k<idx.length;k++){if(grid[idx[k]]===S){grid[idx[k]]=I;seeded=true;break;}}
+}
+
+function resetSim(){
+  clearInterval(simTmr);simTmr=null;
+  day=0;hist={s:[],i:[],r:[],d:[]};
+  initGrid();draw();updateStats();drawChart();
+  document.getElementById('btnStart').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Mulai';
+}
+
+function toggleSim(){
+  if(simTmr){clearInterval(simTmr);simTmr=null;document.getElementById('btnStart').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Lanjut';return;}
+  document.getElementById('btnStart').innerHTML='<i class="ti ti-player-pause" aria-hidden="true"></i> Pause';
+  simTmr=setInterval(step,70);
+}
+window.toggleSim=toggleSim;
+window.resetSim=resetSim;
+
+function step(){
+  next.set(grid);
+  const bp=getP('beta')/100,gp=getP('gam')/100,mp=getP('mort')/100;
+  const nb=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+  for(let r=0;r<ROWS;r++){for(let c=0;c<COLS;c++){
+    const idx=r*COLS+c;
+    if(grid[idx]===I){
+      for(const [dr,dc] of nb){
+        const nr=r+dr,nc=c+dc;
+        if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS){
+          if(grid[nr*COLS+nc]===S&&Math.random()<bp)next[nr*COLS+nc]=I;
+        }
+      }
+      if(Math.random()<gp)next[idx]=Math.random()<mp?D:R;
+    }
+  }}
+  grid.set(next);day++;draw();updateStats();drawChart();
+  if(counts()[I]===0){clearInterval(simTmr);simTmr=null;document.getElementById('btnStart').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Selesai';}
+}
+
+function counts(){const c=[0,0,0,0,0];for(let i=0;i<grid.length;i++)c[grid[i]]++;return c;}
+
+function draw(){
+  const W=gC.width,H=gC.height,pw=W/COLS,ph=H/ROWS;
+  const img=gc.createImageData(W,H),d=img.data;
+  for(let r=0;r<ROWS;r++){for(let c=0;c<COLS;c++){
+    const [rr,g,b]=CLR[grid[r*COLS+c]];
+    const px=0|c*pw,py=0|r*ph,pw2=Math.ceil(pw),ph2=Math.ceil(ph);
+    for(let dy=0;dy<ph2;dy++)for(let dx=0;dx<pw2;dx++){const i=((py+dy)*W+(px+dx))*4;d[i]=rr;d[i+1]=g;d[i+2]=b;d[i+3]=255;}
+  }}
+  gc.putImageData(img,0,0);
+}
+
+function updateStats(){
+  const c=counts(),total=COLS*ROWS;
+  document.getElementById('sc').textContent=c[S].toLocaleString();
+  document.getElementById('ic').textContent=c[I].toLocaleString();
+  document.getElementById('rc').textContent=c[R].toLocaleString();
+  document.getElementById('dc').textContent=c[D].toLocaleString();
+  document.getElementById('dayLbl').textContent='Hari '+day;
+  const r0=(getP('beta')/Math.max(1,getP('gam'))).toFixed(1);
+  const el=document.getElementById('r0v');
+  el.textContent=r0;el.style.color=r0>1?'#E24B4A':'#639922';
+  document.getElementById('r0lbl').textContent=r0>1?'menyebar':'terkendali';
+  hist.s.push(c[S]);hist.i.push(c[I]);hist.r.push(c[R]);hist.d.push(c[D]);
+}
+
+function drawChart(){
+  const W=cC.offsetWidth||600;cC.width=W;const H=110;
+  cc.clearRect(0,0,W,H);
+  const total=COLS*ROWS,n=hist.s.length;if(n<2)return;
+  const series=[{d:hist.s,col:'#378ADD'},{d:hist.i,col:'#E24B4A'},{d:hist.r,col:'#639922'},{d:hist.d,col:'#888780'}];
+  for(const {d,col} of series){
+    cc.beginPath();
+    for(let i=0;i<n;i++){const x=(i/(n-1))*(W-1),y=H-(d[i]/total)*(H-8)-4;i===0?cc.moveTo(x,y):cc.lineTo(x,y);}
+    cc.strokeStyle=col;cc.lineWidth=1.5;cc.stroke();
+  }
+}
+
+['beta','gam','mort','vacc'].forEach(id=>{
+  const el=document.getElementById(id);
+  const map={beta:'bv',gam:'gv',mort:'mv',vacc:'vv'};
+  el.addEventListener('input',()=>{document.getElementById(map[id]).textContent=el.value;});
+});
+
+resetSim();
+})();
+</script>

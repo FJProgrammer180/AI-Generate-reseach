@@ -1,0 +1,326 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: transparent; }
+  #app { padding: 1rem 0; }
+  h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  .header { text-align: center; margin-bottom: 1.25rem; }
+  .header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .header p { font-size: 13px; color: var(--color-text-secondary); }
+  .cam-wrap { position: relative; width: 100%; max-width: 540px; margin: 0 auto 1rem; background: var(--color-background-secondary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); overflow: hidden; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; }
+  #videoEl { width: 100%; height: 100%; object-fit: cover; display: block; transform: scaleX(-1); }
+  #canvasEl { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
+  .placeholder { text-align: center; color: var(--color-text-secondary); }
+  .placeholder i { font-size: 48px; display: block; margin-bottom: 8px; }
+  .placeholder p { font-size: 14px; }
+  .controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.25rem; }
+  .btn-start { background: #1D9E75; color: #fff; border: none; padding: 10px 28px; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: opacity 0.15s; }
+  .btn-start:hover { opacity: 0.88; }
+  .btn-stop { background: transparent; color: var(--color-text-secondary); border: 0.5px solid var(--color-border-secondary); padding: 10px 20px; border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; transition: background 0.15s; }
+  .btn-stop:hover { background: var(--color-background-secondary); }
+  .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; max-width: 540px; margin: 0 auto 1rem; }
+  .metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; text-align: center; }
+  .metric .label { font-size: 11px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .metric .value { font-size: 26px; font-weight: 500; color: var(--color-text-primary); }
+  .metric .sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; font-size: 13px; font-weight: 500; }
+  .pill-live { background: #E1F5EE; color: #0F6E56; }
+  .pill-dead { background: #FCEBEB; color: #A32D2D; }
+  .pill-unknown { background: #F1EFE8; color: #5F5E5A; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-live { background: #1D9E75; animation: pulse 1.5s infinite; }
+  .dot-dead { background: #E24B4A; }
+  .dot-unknown { background: #888780; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  .info-note { max-width: 540px; margin: 0 auto; font-size: 12px; color: var(--color-text-tertiary); text-align: center; padding: 0 1rem; }
+  .loading-bar { max-width: 540px; margin: 0 auto 1rem; }
+  .loading-text { font-size: 13px; color: var(--color-text-secondary); text-align: center; margin-bottom: 6px; }
+  .bar-bg { height: 4px; background: var(--color-background-secondary); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; background: #1D9E75; border-radius: 2px; transition: width 0.3s; }
+  .face-count { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-bottom: 0.75rem; max-width: 540px; margin-left: auto; margin-right: auto; }
+  #errorMsg { max-width: 540px; margin: 0 auto 1rem; background: #FCEBEB; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 13px; color: #A32D2D; text-align: center; display: none; }
+</style>
+
+<div id="app">
+  <h2 class="sr-only">Detektor wajah: estimasi usia dan status kehidupan menggunakan kamera</h2>
+  <div class="header">
+    <h1><i class="ti ti-scan" aria-hidden="true"></i> Face Analyzer</h1>
+    <p>Deteksi wajah · estimasi usia · cek liveness</p>
+  </div>
+
+  <div id="errorMsg"></div>
+
+  <div id="loadingSection" class="loading-bar">
+    <div class="loading-text" id="loadingText">Memuat model AI...</div>
+    <div class="bar-bg"><div class="bar-fill" id="barFill" style="width:5%"></div></div>
+  </div>
+
+  <div class="cam-wrap" id="camWrap">
+    <div class="placeholder" id="placeholderEl">
+      <i class="ti ti-camera" aria-hidden="true"></i>
+      <p>Kamera akan tampil di sini</p>
+    </div>
+    <video id="videoEl" autoplay muted playsinline style="display:none;"></video>
+    <canvas id="canvasEl"></canvas>
+  </div>
+
+  <div class="controls">
+    <button class="btn-start" id="btnStart" disabled>
+      <i class="ti ti-player-play" aria-hidden="true"></i> Mulai Kamera
+    </button>
+    <button class="btn-stop" id="btnStop" style="display:none;">
+      <i class="ti ti-player-pause" aria-hidden="true"></i> Stop
+    </button>
+  </div>
+
+  <p class="face-count" id="faceCount"></p>
+
+  <div class="results-grid">
+    <div class="metric">
+      <div class="label">Estimasi Usia</div>
+      <div class="value" id="ageVal">—</div>
+      <div class="sub" id="ageSub">tahun</div>
+    </div>
+    <div class="metric">
+      <div class="label">Ekspresi</div>
+      <div class="value" style="font-size:18px;" id="exprVal">—</div>
+      <div class="sub" id="exprSub"> </div>
+    </div>
+    <div class="metric" style="grid-column: 1/-1;">
+      <div class="label">Status Liveness</div>
+      <div style="margin-top:6px;" id="livenessVal">
+        <span class="status-pill pill-unknown"><span class="dot dot-unknown"></span>Menunggu...</span>
+      </div>
+      <div class="sub" id="livenessSub" style="margin-top:6px;"> </div>
+    </div>
+  </div>
+
+  <p class="info-note">Model berjalan 100% di perangkat Anda. Tidak ada data yang dikirim ke server.<br>Pastikan izin kamera diaktifkan di browser.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script>
+const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+
+const videoEl = document.getElementById('videoEl');
+const canvasEl = document.getElementById('canvasEl');
+const btnStart = document.getElementById('btnStart');
+const btnStop = document.getElementById('btnStop');
+const placeholderEl = document.getElementById('placeholderEl');
+const ageVal = document.getElementById('ageVal');
+const ageSub = document.getElementById('ageSub');
+const exprVal = document.getElementById('exprVal');
+const exprSub = document.getElementById('exprSub');
+const livenessVal = document.getElementById('livenessVal');
+const livenessSub = document.getElementById('livenessSub');
+const faceCount = document.getElementById('faceCount');
+const barFill = document.getElementById('barFill');
+const loadingText = document.getElementById('loadingText');
+const loadingSection = document.getElementById('loadingSection');
+const errorMsg = document.getElementById('errorMsg');
+
+let stream = null;
+let animFrame = null;
+let modelLoaded = false;
+let livenessHistory = [];
+let prevExprMap = {};
+
+const exprEmoji = {
+  happy: '😄', sad: '😢', angry: '😠', fearful: '😨',
+  disgusted: '🤢', surprised: '😲', neutral: '😐'
+};
+const exprLabel = {
+  happy: 'Senang', sad: 'Sedih', angry: 'Marah', fearful: 'Takut',
+  disgusted: 'Jijik', surprised: 'Kaget', neutral: 'Netral'
+};
+
+async function loadModels() {
+  try {
+    loadingText.textContent = 'Memuat model deteksi wajah...';
+    barFill.style.width = '15%';
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    barFill.style.width = '45%';
+    loadingText.textContent = 'Memuat model estimasi usia & gender...';
+    await faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL);
+    barFill.style.width = '75%';
+    loadingText.textContent = 'Memuat model ekspresi wajah...';
+    await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+    barFill.style.width = '100%';
+    loadingText.textContent = 'Model siap!';
+    modelLoaded = true;
+    setTimeout(() => { loadingSection.style.display = 'none'; }, 800);
+    btnStart.disabled = false;
+  } catch(e) {
+    showError('Gagal memuat model AI. Coba refresh halaman.');
+  }
+}
+
+function showError(msg) {
+  errorMsg.style.display = 'block';
+  errorMsg.textContent = msg;
+}
+
+btnStart.addEventListener('click', async () => {
+  if (!modelLoaded) return;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } });
+    videoEl.srcObject = stream;
+    videoEl.style.display = 'block';
+    placeholderEl.style.display = 'none';
+    btnStart.style.display = 'none';
+    btnStop.style.display = '';
+    await videoEl.play();
+    videoEl.addEventListener('loadeddata', startDetection, { once: true });
+  } catch(e) {
+    console.error('getUserMedia error', e);
+    showError('Tidak bisa mengakses kamera. Pastikan izin kamera diberikan di browser Anda.');
+  }
+});
+
+btnStop.addEventListener('click', () => {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+  videoEl.style.display = 'none';
+  placeholderEl.style.display = '';
+  btnStop.style.display = 'none';
+  btnStart.style.display = '';
+  const ctx = canvasEl.getContext('2d');
+  ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+  resetResults();
+});
+
+function resetResults() {
+  ageVal.textContent = '—'; ageSub.textContent = 'tahun';
+  exprVal.textContent = '—'; exprSub.textContent = ' ';
+  livenessVal.innerHTML = '<span class="status-pill pill-unknown"><span class="dot dot-unknown"></span>Menunggu...</span>';
+  livenessSub.textContent = ' '; faceCount.textContent = '';
+  livenessHistory = []; prevExprMap = {};
+}
+
+function startDetection() {
+  let lastDetectTime = 0;
+  const MIN_INTERVAL = 150; // ms, ~6-7 FPS to reduce CPU usage
+
+  const detect = async () => {
+    if (!stream) return;
+    const now = Date.now();
+    if (now - lastDetectTime < MIN_INTERVAL) {
+      animFrame = requestAnimationFrame(detect);
+      return;
+    }
+    lastDetectTime = now;
+
+    const displaySize = { width: videoEl.videoWidth, height: videoEl.videoHeight };
+    canvasEl.width = displaySize.width;
+    canvasEl.height = displaySize.height;
+
+    try {
+      const detections = await faceapi
+        .detectAllFaces(videoEl, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.4 }))
+        .withAgeAndGender()
+        .withFaceExpressions();
+
+      const ctx = canvasEl.getContext('2d');
+      ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+      if (detections.length === 0) {
+        faceCount.textContent = 'Tidak ada wajah terdeteksi';
+        resetResults();
+        animFrame = requestAnimationFrame(detect);
+        return;
+      }
+
+      faceCount.textContent = `${detections.length} wajah terdeteksi`;
+
+      detections.forEach((det, i) => {
+        const box = det.detection.box;
+        const age = Math.round(det.age);
+        const expressions = det.expressions;
+        const topExpr = Object.entries(expressions).sort((a, b) => b[1] - a[1])[0];
+
+        const liveness = computeLiveness(expressions, age);
+
+        ctx.strokeStyle = liveness.alive ? '#1D9E75' : '#E24B4A';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+        ctx.fillStyle = liveness.alive ? 'rgba(29,158,117,0.85)' : 'rgba(226,75,74,0.85)';
+        const tagH = 26;
+        ctx.fillRect(box.x, box.y - tagH, box.width, tagH);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '13px sans-serif';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`~${age} th · ${liveness.label}`, box.x + 8, box.y - tagH / 2);
+
+        if (i === 0) {
+          ageVal.textContent = age;
+          ageSub.textContent = 'tahun (estimasi)';
+          exprVal.textContent = (exprEmoji[topExpr[0]] || '') + ' ' + (exprLabel[topExpr[0]] || topExpr[0]);
+          exprSub.textContent = `${Math.round(topExpr[1] * 100)}% keyakinan`;
+          renderLiveness(liveness);
+        }
+      });
+    } catch(e) {
+      console.error('Deteksi error', e);
+      showError('Terjadi kesalahan saat deteksi. Cek konsol browser.');
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+      return;
+    }
+
+    animFrame = requestAnimationFrame(detect);
+  };
+  detect();
+}
+
+function computeLiveness(expressions, age) {
+  const neutral = expressions.neutral || 0;
+  const happy = expressions.happy || 0;
+  const sad = expressions.sad || 0;
+  const angry = expressions.angry || 0;
+  const fearful = expressions.fearful || 0;
+  const surprised = expressions.surprised || 0;
+  const disgusted = expressions.disgusted || 0;
+
+  const activityScore = happy + sad + angry + fearful + surprised + disgusted;
+  const expressionVariety = Object.values(expressions).filter(v => v > 0.05).length;
+
+  livenessHistory.push(activityScore);
+  if (livenessHistory.length > 20) livenessHistory.shift();
+
+  const avgActivity = livenessHistory.reduce((a, b) => a + b, 0) / livenessHistory.length;
+  const maxActivity = Math.max(...livenessHistory);
+  const minActivity = Math.min(...livenessHistory);
+  const variance = maxActivity - minActivity;
+
+  let confidence = 0;
+  let reasons = [];
+
+  if (activityScore > 0.1) { confidence += 30; reasons.push('ada ekspresi aktif'); }
+  if (variance > 0.08 && livenessHistory.length >= 8) { confidence += 35; reasons.push('gerakan terdeteksi'); }
+  if (expressionVariety >= 2) { confidence += 20; reasons.push('variasi ekspresi'); }
+  if (avgActivity > 0.05) { confidence += 15; reasons.push('aktivitas wajah stabil'); }
+
+  const alive = confidence >= 40;
+  const label = alive ? 'HIDUP' : (confidence >= 20 ? 'Tidak Pasti' : 'Tidak Terdeteksi');
+
+  return { alive, confidence: Math.min(confidence, 100), label, reasons };
+}
+
+function renderLiveness(liveness) {
+  let html, subText;
+  if (liveness.alive) {
+    html = `<span class="status-pill pill-live"><span class="dot dot-live"></span>Hidup (Live)</span>`;
+    subText = `Keyakinan ${liveness.confidence}% · ${liveness.reasons.join(', ')}`;
+  } else if (liveness.confidence >= 20) {
+    html = `<span class="status-pill pill-unknown"><span class="dot dot-unknown"></span>Tidak Pasti</span>`;
+    subText = `Gerakkan wajah Anda untuk verifikasi liveness`;
+  } else {
+    html = `<span class="status-pill pill-dead"><span class="dot dot-dead"></span>Tidak Terdeteksi Hidup</span>`;
+    subText = `Mungkin foto/gambar statis · keyakinan rendah`;
+  }
+  livenessVal.innerHTML = html;
+  livenessSub.textContent = subText;
+}
+
+loadModels();
+</script>

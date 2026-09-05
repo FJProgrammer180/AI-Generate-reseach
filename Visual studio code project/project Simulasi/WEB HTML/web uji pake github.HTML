@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kompleks Web Fajriansyah Adithama</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&display=swap');
+    body {
+      margin: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: #f0f4fa;
+      color: #223;
+      transition: background .4s;
+    }
+    header {
+      text-align: center;
+      padding: 40px 10px 22px 10px;
+      background: linear-gradient(90deg,#0054a5,#73d2ff 75%);
+      color: white;
+      box-shadow: 0 4px 22px #0001;
+      position: relative;
+      z-index:10;
+    }
+    .animated-name {
+      font-size: 2.7em;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ffd600, #0075ac, #26fea0, #0054a5, #e08bff);
+      background-size: 200% auto;
+      color: #fff;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradmove 7s linear infinite;
+      margin-bottom:10px;
+    }
+    @keyframes gradmove {
+      to{background-position:200%}
+    }
+    .subtitle {
+      font-size: 1.13em;
+      opacity: 0.82;
+      margin-bottom: 0;
+    }
+    .biografi-section {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      margin: 60px auto 35px;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 0px 32px #0080ec09;
+      padding: 42px 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .biografi-section img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      box-shadow: 0 4px 24px #0077c220;
+      object-fit: cover;
+      border: 4px solid #8be0ff2a;
+      background: #e0eafc;
+    }
+    .bio-desc {
+      max-width: 520px;
+      font-size: 1.13em;
+      color: #265;
+      line-height: 1.7;
+    }
+    .logo-bar {
+      display: flex;
+      gap: 38px;
+      justify-content: center;
+      margin: 32px auto 0;
+      flex-wrap: wrap;
+    }
+    .logo-bar .logo-card {
+      background: #d9edfe;
+      border-radius: 16px;
+      padding: 17px 15px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 2px 18px #0075ac0c;
+      min-width: 110px;
+      max-width: 160px;
+      transition: .14s;
+    }
+    .logo-bar .logo-card:hover {
+      transform: translateY(-7px) scale(1.045);
+      box-shadow: 0 7px 22px #0054a530;
+    }
+    .logo-card img {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+      margin-bottom: 11px;
+      border-radius: 8px;
+      background: white;
+    }
+    .logo-card p {
+      margin: 3.5px 0 2px 0;
+      font-size: .97em;
+      color: #236;
+      text-align: center;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 42px;
+      color: #006f8b;
+      letter-spacing: 1px;
+    }
+    .lang-list {
+      margin: 45px auto 28px;
+      max-width: 1040px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(308px, 1fr));
+      gap: 26px;
+      align-items: stretch;
+    }
+    .lang-card {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 3px 21px #56bcef13;
+      padding: 25px 21px 12px 25px;
+      display: flex;
+      gap:18px;
+      align-items: flex-start;
+      transition: .18s;
+      min-width:0;
+      border: 1.5px solid #eef7fc;
+    }
+    .lang-card:hover {
+      box-shadow:0 10px 40px #3974eb17;
+      border-color:#b1ebff;
+      transform:translateY(-3px);
+    }
+    .lang-logo {
+      width: 52px;
+      min-width:52px;
+      height: 52px;
+      border-radius: 10px;
+      background: #e3f6ff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 1px 8px #39b6a613;
+      object-fit:contain;
+    }
+    .lang-content {
+      flex:1;
+    }
+    .lang-content h3 {
+      margin: 0 0 8px;
+      font-size: 1.12em;
+      color:#0077b6;
+    }
+    .lang-content p {
+      margin: 0 0 3px 0;
+      color: #284a6d;
+      font-size: .98em;
+      letter-spacing: 0.01em;
+    }
+    footer {
+      text-align: center;
+      padding: 18px 10px;
+      margin-top: 40px;
+      background: linear-gradient(90deg,#5e72e4 30%,#39b69a 75%);
+      color: #fff;
+      border-radius: 0 0 18px 18px;
+      font-size:1em;
+    }
+    @media (max-width:700px){
+      .main-wrapper, .biografi-section {padding: 18px 6px;}
+      .biografi-section{flex-direction:column;align-items:stretch;}
+      .bio-desc{max-width:96vw;}
+      .lang-list{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));}
+      header{padding:22px 5px 9px;}
+      .animated-name{font-size:1.2em;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="animated-name" id="namaku">Fajriansyah Adithama</div>
+    <div class="subtitle">Web Biografi & Penjelasan Bahasa Pemrograman</div>
+    <div style="position:absolute;right:18px;top:16px;opacity:.13;font-size:2.5em;">&lt;/&gt;</div>
+  </header>
+
+  <section class="biografi-section" data-aos="fade-up">
+    <img id="profile-foto" src="https://i.ibb.co/njWQPN8/avatar-example.jpg" alt="Foto profil Fajriansyah Adithama">
+    <div class="bio-desc">
+      <h3 style="margin-top:0">Biografi</h3>
+      <p>
+        Halo! Saya <b>Fajriansyah Adithama</b>, seorang penggemar dunia teknologi, web, dan komputer. Saya menyenangi pembelajaran pemrograman baik untuk web maupun aplikasi, serta aktif berbagi ilmu dan semangat inovasi di komunitas kampus & luar. <br>
+        Saya percaya teknologi dan kreativitas akan membawa perubahan positif bagi bangsa. Dream big, stay curious, never stop learning!
+      </p>
+    </div>
+  </section>
+
+  <h2 data-aos="fade-left">Logo Universitas & Logo Unik</h2>
+  <div class="logo-bar">
+    <!-- Gambar 1: Logo ITS -->
+    <div class="logo-card" data-aos="zoom-in">
+      <img src="https://upload.wikimedia.org/wikipedia/id/0/0a/Institut_Teknologi_Sepuluh_Nopember.png" alt="Logo ITS">
+      <b>ITS</b>
+      <p>Institut Teknologi Sepuluh Nopember</p>
+    </div>
+    <!-- Gambar 2: Logo Unik -->
+    <div class="logo-card" data-aos="zoom-in" data-aos-delay="150">
+      <img src="https://i.imgur.com/H2YgHXh.png" alt="Logo Unik" style="background:#222;">
+      <b>Logo Unik</b>
+      <p>Logo generik modern (misal branding, komunitas, dll)</p>
+    </div>
+  </div>
+
+  <h2 data-aos="fade-right">Penjelasan Bahasa Pemrograman Populer</h2>
+  <div class="lang-list">
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="50">
+      <span class="lang-logo"><img style="width:44px;" src="https://www.python.org/static/opengraph-icon-200x200.png" alt="Python"></span>
+      <div class="lang-content">
+        <h3>Python</h3>
+        <p>Python adalah bahasa pemrograman populer yang mudah dibaca, cocok untuk data science, AI, otomasi, web, dan banyak lagi. Sintaksnya ringkas, cocok untuk pemula maupun profesional.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="100">
+      <span class="lang-logo"><img style="width:37px;" src="https://cdn-icons-png.flaticon.com/512/5968/5968292.png" alt="JavaScript"></span>
+      <div class="lang-content">
+        <h3>JavaScript (JS)</h3>
+        <p>JavaScript adalah bahasa utama dalam pengembangan web untuk membuat halaman interaktif, SPA, hingga backend (dengan Node.js).</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="150">
+      <span class="lang-logo"><img style="width:36px;" src="https://cdn-icons-png.flaticon.com/512/888/888859.png" alt="HTML"></span>
+      <div class="lang-content">
+        <h3>HTML</h3>
+        <p>HTML (HyperText Markup Language) adalah fondasi dari semua situs web, digunakan untuk membuat struktur halaman web.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="200">
+      <span class="lang-logo"><img style="width:38px;" src="https://cdn-icons-png.flaticon.com/512/732/732190.png" alt="CSS"></span>
+      <div class="lang-content">
+        <h3>CSS</h3>
+        <p>CSS (Cascading Style Sheets) digunakan untuk mendesain dan memperindah tampilan web, seperti warna, layout, animasi, dsb.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="250">
+      <span class="lang-logo"><img style="width:39px;" src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" alt="C"></span>
+      <div class="lang-content">
+        <h3>C</h3>
+        <p>C adalah bahasa dasar bagi banyak pemrograman modern (OS & sistem embedded), sintaks sederhana, performa tinggi.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="300">
+      <span class="lang-logo"><img style="width:39px;" src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg" alt="C++"></span>
+      <div class="lang-content">
+        <h3>C++</h3>
+        <p>C++ merupakan pengembangan dari C, mendukung OOP, sering digunakan pada aplikasi performa tinggi seperti game/engine.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="350">
+      <span class="lang-logo"><img style="width:37px;" src="https://cdn-icons-png.flaticon.com/512/5968/5968282.png" alt="Java"></span>
+      <div class="lang-content">
+        <h3>Java</h3>
+        <p>Java populer untuk aplikasi enterprise, mobile (Android), dan web backend, dengan prinsip “tulis sekali, jalan di mana saja”.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="400">
+      <span class="lang-logo"><img style="width:37px;background:#fff;border-radius:10px;" src="https://cdn.worldvectorlogo.com/logos/php-1.svg" alt="PHP"></span>
+      <div class="lang-content">
+        <h3>PHP</h3>
+        <p>PHP adalah bahasa server-side, banyak digunakan untuk membuat web dinamis dan populer di sistem manajemen konten seperti WordPress.</p>
+      </div>
+    </div>
+    <div class="lang-card" data-aos="fade-right" data-aos-delay="450">
+      <span class="lang-logo"><img style="width:39px;" src="https://seeklogo.com/images/R/rust-programming-language-logo-47E0DF1D1D-seeklogo.com.png" alt="Rust"></span>
+      <div class="lang-content">
+        <h3>Rust</h3>
+        <p>Rust adalah bahasa sistem modern yang aman dan cepat, populer untuk aplikasi performa tinggi tanpa bug memory.</p>
+      </div>
+    </div>
+    <!-- Tambahkan bahasa lainnya jika ingin -->
+  </div>
+  <footer>
+    &copy; 2026 Fajriansyah Adithama – Web Programming & Biografi | All Rights Reserved
+  </footer>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // Animasi nama (mesin ketik)
+    function typingEffect(el, text, speed) {
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          el.innerHTML = text.slice(0, i+1) + '<span style="border-right:2px solid #ffd600;padding-left:1.5px"></span>';
+          i++;
+          setTimeout(type, speed);
+        } else {
+          el.textContent = text;
+        }
+      }
+      el.textContent = "";
+      type();
+    }
+    setTimeout(() => typingEffect(document.getElementById('namaku'), 'Fajriansyah Adithama', 50), 80);
+
+    // AOS scroll animation
+    AOS.init({ duration: 800, offset: 80 });
+    // Untuk ganti foto profil, tinggal edit src #profile-foto
+    // document.getElementById('profile-foto').src = "url-foto-kamu";
+  </script>
+</body>
+</html>

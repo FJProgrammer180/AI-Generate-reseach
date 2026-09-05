@@ -1,0 +1,290 @@
+
+<style>
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+canvas{display:block;border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);background:#1a1f2e;}
+.ctrl{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-secondary);}
+.ctrl span{min-width:38px;font-size:13px;font-weight:500;color:var(--color-text-primary);text-align:right;}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;text-align:center;}
+.stat-v{font-size:18px;font-weight:500;}
+.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:2px;}
+.phase-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;}
+</style>
+
+<h2 class="sr-only">Simulasi tabrakan dua mobil dengan fisika momentum, energi kinetik, dan deformasi bodi.</h2>
+
+<canvas id="c" height="280" style="width:100%;"></canvas>
+
+<div style="margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+  <div class="stat"><div class="stat-v" id="v1disp" style="color:#3B82F6;">60</div><div class="stat-l">Mobil 1 (km/h)</div></div>
+  <div class="stat"><div class="stat-v" id="v2disp" style="color:#EF4444;">-40</div><div class="stat-l">Mobil 2 (km/h)</div></div>
+  <div class="stat"><div class="stat-v" id="ekdisp">—</div><div class="stat-l">Energi kinetik (J)</div></div>
+  <div class="stat"><div class="stat-v" id="impdisp">—</div><div class="stat-l">Impuls (kg·m/s)</div></div>
+</div>
+
+<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+  <div class="ctrl"><label style="min-width:110px;">Kecepatan mobil 1</label><input type="range" id="s1" min="10" max="150" value="60" step="1" style="flex:1;"><span id="s1v">60</span> km/h</div>
+  <div class="ctrl"><label style="min-width:110px;">Kecepatan mobil 2</label><input type="range" id="s2" min="10" max="150" value="40" step="1" style="flex:1;"><span id="s2v">40</span> km/h</div>
+  <div class="ctrl"><label style="min-width:110px;">Massa mobil 1</label><input type="range" id="m1" min="500" max="3000" value="1200" step="100" style="flex:1;"><span id="m1v">1200</span> kg</div>
+  <div class="ctrl"><label style="min-width:110px;">Massa mobil 2</label><input type="range" id="m2" min="500" max="3000" value="1500" step="100" style="flex:1;"><span id="m2v">1500</span> kg</div>
+  <div class="ctrl"><label style="min-width:110px;">Koefisien restitusi</label><input type="range" id="cr" min="0" max="100" value="30" step="1" style="flex:1;"><span id="crv">0.30</span> <span style="font-size:11px;color:var(--color-text-secondary);">(0=plastis, 1=elastis)</span></div>
+</div>
+
+<div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+  <button onclick="startCrash()" id="btnGo" style="font-size:13px;padding:7px 20px;"><i class="ti ti-player-play" aria-hidden="true"></i> Tabrak!</button>
+  <button onclick="resetSim()" style="font-size:13px;padding:7px 16px;"><i class="ti ti-refresh" aria-hidden="true"></i> Reset</button>
+  <span style="font-size:12px;color:var(--color-text-secondary);">Fase:</span>
+  <span id="phaseBadge" class="phase-badge" style="background:var(--color-background-info);color:var(--color-text-info);">Siap</span>
+  <span id="resultTxt" style="font-size:12px;color:var(--color-text-secondary);margin-left:4px;"></span>
+</div>
+
+<script>
+(function(){
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+let W,H,groundY,raf;
+
+function resize(){
+  W=canvas.offsetWidth||680;
+  canvas.width=W;
+  H=canvas.height=280;
+  groundY=H-60;
+}
+resize();
+
+const CAR_W=100,CAR_H=38,WHEEL_R=11;
+let phase='idle';
+let c1,c2,debris=[],sparks=[];
+let collisionX=0;
+
+function getParams(){
+  return {
+    v1:+document.getElementById('s1').value/3.6,
+    v2:-(+document.getElementById('s2').value/3.6),
+    m1:+document.getElementById('m1').value,
+    m2:+document.getElementById('m2').value,
+    cr:+document.getElementById('cr').value/100
+  };
+}
+
+function resetSim(){
+  cancelAnimationFrame(raf);
+  phase='idle';
+  debris=[];sparks=[];
+  const p=getParams();
+  c1={x:60,y:groundY-CAR_H-WHEEL_R*2+8,vx:p.v1,vy:0,color:'#3B82F6',m:p.m1,flip:false,dmg:0,angle:0,av:0};
+  c2={x:W-60-CAR_W,y:groundY-CAR_H-WHEEL_R*2+8,vx:p.v2,vy:0,color:'#EF4444',m:p.m2,flip:true,dmg:0,angle:0,av:0};
+  updateStats(p.v1*3.6, -p.v2*3.6);
+  document.getElementById('phaseBadge').textContent='Siap';
+  document.getElementById('phaseBadge').style.background='var(--color-background-info)';
+  document.getElementById('phaseBadge').style.color='var(--color-text-info)';
+  document.getElementById('resultTxt').textContent='';
+  document.getElementById('btnGo').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Tabrak!';
+  draw();
+}
+
+function updateStats(v1kmh,v2kmh){
+  document.getElementById('v1disp').textContent=Math.round(Math.abs(v1kmh));
+  document.getElementById('v2disp').textContent=Math.round(Math.abs(v2kmh));
+}
+
+function startCrash(){
+  if(phase==='running')return;
+  const p=getParams();
+  c1.vx=p.v1; c2.vx=p.v2;
+  c1.m=p.m1; c2.m=p.m2;
+  phase='running';
+  document.getElementById('phaseBadge').textContent='Mendekati...';
+  document.getElementById('phaseBadge').style.background='var(--color-background-warning)';
+  document.getElementById('phaseBadge').style.color='var(--color-text-warning)';
+  document.getElementById('btnGo').innerHTML='<i class="ti ti-player-pause" aria-hidden="true"></i> Berjalan...';
+  loop();
+}
+
+function checkCollision(){
+  const p=getParams();
+  if(c1.x+CAR_W >= c2.x && phase==='running'){
+    collisionX=(c1.x+CAR_W+c2.x)/2;
+    const cr=p.cr;
+    const m1=c1.m,m2=c2.m,u1=c1.vx,u2=c2.vx;
+    const v1=((m1-cr*m2)*u1+(1+cr)*m2*u2)/(m1+m2);
+    const v2=((m2-cr*m1)*u2+(1+cr)*m1*u1)/(m1+m2);
+    const ek1=0.5*m1*u1*u1+0.5*m2*u2*u2;
+    const ek2=0.5*m1*v1*v1+0.5*m2*v2*v2;
+    const deltaEk=Math.round(ek1-ek2);
+    const imp=Math.round(Math.abs(m1*(v1-u1)));
+    document.getElementById('ekdisp').textContent=(Math.round(ek1)).toLocaleString();
+    document.getElementById('impdisp').textContent=imp.toLocaleString();
+    c1.vx=v1; c2.vx=v2;
+    c1.dmg=Math.min(1,(Math.abs(u1-u2)/30));
+    c2.dmg=Math.min(1,(Math.abs(u1-u2)/30));
+    c1.av=(Math.random()-0.5)*0.04*c1.dmg*3;
+    c2.av=(Math.random()-0.5)*0.04*c2.dmg*3;
+    spawnDebris(collisionX, c1.y+CAR_H/2);
+    spawnSparks(collisionX, c1.y+CAR_H/2);
+    phase='post';
+    document.getElementById('phaseBadge').textContent='CRASH!';
+    document.getElementById('phaseBadge').style.background='var(--color-background-danger)';
+    document.getElementById('phaseBadge').style.color='var(--color-text-danger)';
+    const typeStr=cr<0.1?'Tumbukan sempurna inelastis':cr<0.5?'Tumbukan inelastis':cr<0.9?'Tumbukan semi-elastis':'Tumbukan elastis';
+    document.getElementById('resultTxt').textContent=`${typeStr} — Energi hilang: ${deltaEk.toLocaleString()} J`;
+  }
+}
+
+function spawnDebris(x,y){
+  for(let i=0;i<28;i++){
+    const spd=2+Math.random()*6;
+    const ang=Math.random()*Math.PI*2;
+    debris.push({x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd-3,life:1,size:2+Math.random()*5,color:Math.random()>0.5?'#888':'#ccc',rot:Math.random()*6,rotv:(Math.random()-0.5)*0.3});
+  }
+}
+function spawnSparks(x,y){
+  for(let i=0;i<40;i++){
+    const spd=3+Math.random()*10;
+    const ang=-Math.PI/2+( Math.random()-0.5)*Math.PI*1.2;
+    sparks.push({x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,life:1});
+  }
+}
+
+function drawRoad(){
+  ctx.fillStyle='#1a1f2e';
+  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#2a2f3e';
+  ctx.fillRect(0,groundY,W,H-groundY);
+  ctx.strokeStyle='#3a4050';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,groundY);ctx.lineTo(W,groundY);ctx.stroke();
+  ctx.strokeStyle='#f5a623';
+  ctx.setLineDash([30,20]);
+  ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(0,groundY+20);ctx.lineTo(W,groundY+20);ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawCar(car){
+  ctx.save();
+  const cx=car.x+CAR_W/2, cy=car.y+CAR_H/2;
+  ctx.translate(cx,cy);
+  ctx.rotate(car.angle);
+  if(car.flip)ctx.scale(-1,1);
+
+  const dmg=car.dmg;
+  const bodyW=CAR_W*(1+dmg*0.15), bodyH=CAR_H;
+
+  ctx.fillStyle=car.color;
+  ctx.beginPath();
+  ctx.roundRect(-bodyW/2,-bodyH/2,bodyW,bodyH,4);
+  ctx.fill();
+
+  if(dmg>0){
+    ctx.fillStyle='rgba(0,0,0,0.3)';
+    ctx.fillRect(-bodyW/2,-bodyH/2,bodyW*dmg*0.6,bodyH);
+  }
+
+  ctx.fillStyle='#1a2a3a';
+  ctx.fillRect(-CAR_W*0.15,-CAR_H*0.5+4,CAR_W*0.4,CAR_H*0.38);
+  ctx.fillStyle='rgba(180,220,255,0.6)';
+  ctx.fillRect(-CAR_W*0.13,-CAR_H*0.5+6,CAR_W*0.36,CAR_H*0.32);
+
+  ctx.fillStyle='#ffdd44';
+  ctx.fillRect(CAR_W/2-6,-5,6,8);
+  ctx.fillStyle='#ff4444';
+  ctx.fillRect(-CAR_W/2,-5,5,8);
+
+  const wx=[-bodyW*0.27, bodyW*0.27];
+  for(const x of wx){
+    ctx.fillStyle='#111';
+    ctx.beginPath();ctx.arc(x,bodyH/2,WHEEL_R,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#555';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(x,bodyH/2,WHEEL_R-3,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle='#777';ctx.lineWidth=1.5;
+    for(let s=0;s<4;s++){
+      const a=s*Math.PI/2;
+      ctx.beginPath();
+      ctx.moveTo(x,bodyH/2);
+      ctx.lineTo(x+Math.cos(a)*(WHEEL_R-3),bodyH/2+Math.sin(a)*(WHEEL_R-3));
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawDebris(){
+  for(const d of debris){
+    ctx.save();
+    ctx.globalAlpha=d.life;
+    ctx.translate(d.x,d.y);
+    ctx.rotate(d.rot);
+    ctx.fillStyle=d.color;
+    ctx.fillRect(-d.size/2,-d.size/2,d.size,d.size);
+    ctx.restore();
+  }
+}
+function drawSparks(){
+  for(const s of sparks){
+    ctx.save();
+    ctx.globalAlpha=s.life;
+    ctx.fillStyle=`hsl(${40+Math.random()*20},100%,70%)`;
+    ctx.beginPath();ctx.arc(s.x,s.y,1.5,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+}
+
+function draw(){
+  drawRoad();
+  drawDebris();
+  drawSparks();
+  drawCar(c1);
+  drawCar(c2);
+
+  ctx.fillStyle='rgba(255,255,255,0.7)';
+  ctx.font='11px monospace';
+  ctx.fillText(`Mobil 1: ${Math.round(Math.abs(c1.vx*3.6))} km/h`,12,20);
+  ctx.fillText(`Mobil 2: ${Math.round(Math.abs(c2.vx*3.6))} km/h`,12,34);
+}
+
+const DT=1/60;
+function loop(){
+  if(phase==='running'||phase==='post'){
+    c1.x+=c1.vx*DT*60;
+    c2.x+=c2.vx*DT*60;
+    if(phase==='running')checkCollision();
+
+    c1.angle+=c1.av; c2.angle+=c2.av;
+    c1.av*=0.97; c2.av*=0.97;
+
+    for(const d of debris){d.x+=d.vx;d.y+=d.vy;d.vy+=0.4;d.life-=0.015;d.rot+=d.rotv;if(d.y>groundY)d.vy*=-0.3;}
+    debris=debris.filter(d=>d.life>0);
+    for(const s of sparks){s.x+=s.vx;s.y+=s.vy;s.vy+=0.3;s.life-=0.035;}
+    sparks=sparks.filter(s=>s.life>0);
+
+    updateStats(c1.vx*3.6,c2.vx*3.6);
+
+    if(c1.x>W+200&&c2.x<-200&&phase==='post'){
+      phase='done';
+      document.getElementById('phaseBadge').textContent='Selesai';
+      document.getElementById('phaseBadge').style.background='var(--color-background-success)';
+      document.getElementById('phaseBadge').style.color='var(--color-text-success)';
+      document.getElementById('btnGo').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Tabrak!';
+    }
+  }
+  draw();
+  if(phase==='running'||phase==='post'||debris.length>0||sparks.length>0)
+    raf=requestAnimationFrame(loop);
+}
+
+['s1','s2','m1','m2','cr'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',()=>{
+    const map={s1:'s1v',s2:'s2v',m1:'m1v',m2:'m2v',cr:'crv'};
+    const val=id==='cr'?(+el.value/100).toFixed(2):el.value;
+    document.getElementById(map[id]).textContent=val;
+    if(phase==='idle')resetSim();
+  });
+});
+
+window.startCrash=startCrash;
+window.resetSim=resetSim;
+
+resetSim();
+})();
+</script>

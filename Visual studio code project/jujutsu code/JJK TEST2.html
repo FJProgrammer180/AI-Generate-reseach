@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jujutsu Kaisen AR Game v2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ui.css">
+</head>
+<body>
+    <!-- Video Stream -->
+    <div id="videoContainer">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="canvas"></canvas>
+        <canvas id="effectsCanvas"></canvas>
+    </div>
+
+    <!-- UI Container -->
+    <div id="ui">
+        <!-- Status Panel -->
+        <div class="status-panel">
+            <div class="status-header">JJK AR GAME v2.0</div>
+            <div id="statusText" class="status-text">Initializing...</div>
+        </div>
+
+        <!-- Player Stats -->
+        <div class="stats-panel">
+            <!-- HP Bar -->
+            <div class="stat-group">
+                <div class="stat-label">HP</div>
+                <div class="stat-bar">
+                    <div id="hpBar" class="bar-fill hp-fill"></div>
+                </div>
+                <div id="hpText" class="stat-value">100/100</div>
+            </div>
+
+            <!-- CE (Cursed Energy) Bar -->
+            <div class="stat-group">
+                <div class="stat-label">CE</div>
+                <div class="stat-bar">
+                    <div id="ceBar" class="bar-fill ce-fill"></div>
+                </div>
+                <div id="ceText" class="stat-value">100/100</div>
+            </div>
+
+            <!-- Domain Gauge -->
+            <div class="stat-group">
+                <div class="stat-label">DOMAIN</div>
+                <div class="stat-bar">
+                    <div id="domainBar" class="bar-fill domain-fill"></div>
+                </div>
+                <div id="domainText" class="stat-value">0/100</div>
+            </div>
+        </div>
+
+        <!-- Jutsu Display -->
+        <div class="jutsu-panel">
+            <div class="jutsu-header">ACTIVE JUTSU</div>
+            <div id="jutsuName" class="jutsu-name">---</div>
+            <div id="jutsuCost" class="jutsu-cost">---</div>
+            <div id="jutsuCooldown" class="jutsu-cooldown">---</div>
+        </div>
+
+        <!-- Combo Counter -->
+        <div class="combo-display">
+            <div id="comboCounter" class="combo-value">0</div>
+            <div class="combo-label">COMBO</div>
+        </div>
+
+        <!-- Controls Info -->
+        <div class="controls-info">
+            <div class="control-item">
+                <span class="control-gesture">☝️ ONE HAND</span>
+                <span class="control-action">Select Jutsu</span>
+            </div>
+            <div class="control-item">
+                <span class="control-gesture">✌️ PEACE</span>
+                <span class="control-action">Cast Jutsu</span>
+            </div>
+            <div class="control-item">
+                <span class="control-gesture">👊 FIST</span>
+                <span class="control-action">Basic Attack</span>
+            </div>
+            <div class="control-item">
+                <span class="control-gesture">🖐️ HAND OPEN</span>
+                <span class="control-action">Ultimate</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Panel -->
+    <div id="debugPanel" class="debug-panel">
+        <div class="debug-toggle">DEBUG</div>
+        <div id="debugInfo" class="debug-info" style="display: none;">
+            <div id="fps">FPS: 0</div>
+            <div id="hands">Hands: 0</div>
+            <div id="gesture">Gesture: ---</div>
+            <div id="cameraStatus">Camera: Init</div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>⚠️ ERROR</h2>
+            <p id="errorMessage">An error occurred</p>
+            <button id="retryButton" class="btn-retry">RETRY</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+
+    <!-- Game Scripts -->
+    <script src="js/game/jutsus.js"></script>
+    <script src="js/game/gameState.js"></script>
+    <script src="js/game/gameLogic.js"></script>
+    <script src="js/hand/gestureRecognizer.js"></script>
+    <script src="js/hand/handTracker.js"></script>
+    <script src="js/graphics/particleSystem.js"></script>
+    <script src="js/graphics/effects.js"></script>
+    <script src="js/graphics/domainExpansion.js"></script>
+    <script src="js/ui/uiRenderer.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

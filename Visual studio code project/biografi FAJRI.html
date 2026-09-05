@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My University Web - Fajriansyah Adithama</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&display=swap');
+    body {
+      margin: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: #f2f6fc;
+      color: #1a237e;
+      min-height: 100vh;
+      transition: background 0.5s;
+    }
+    header {
+      text-align: center;
+      padding: 40px 10px 20px 10px;
+      background: linear-gradient(90deg, #5e72e4 20%, #39b69a 80%);
+      color: white;
+      position: relative;
+      box-shadow: 0 4px 24px #0002;
+    }
+    .animated-name {
+      font-size: 2.5em;
+      font-weight: 700;
+      letter-spacing: 2px;
+      position: relative;
+      display: inline-block;
+      background: linear-gradient(90deg, #ffd600, #39b69a, #5e72e4, #ffd600, #1a237e);
+      background-size: 200% auto;
+      color: #fff;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradmove 3s linear infinite;
+    }
+    @keyframes gradmove {
+      0%{background-position:0%}
+      100%{background-position:200%}
+    }
+    .main-wrapper {
+      max-width: 940px;
+      margin: 30px auto 0 auto;
+      background: white;
+      box-shadow: 0 4px 26px #0001;
+      padding: 34px 20px;
+      border-radius: 18px;
+      min-height: 400px;
+    }
+    .logo-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 44px;
+      margin: 48px auto 30px;
+    }
+    .logo-card {
+      background: #f8fafc;
+      border-radius: 16px;
+      box-shadow: 0 2px 14px #0001;
+      width: 162px;
+      padding: 20px 14px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform .18s, box-shadow .2s;
+    }
+    .logo-card:hover {
+      transform: translateY(-8px) scale(1.04);
+      box-shadow: 0 8px 32px #8394c62b;
+    }
+    .logo-card img {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      background: white;
+      border: 2px solid #eceff1;
+    }
+    .logo-card h3 {
+      font-size: 1.05em;
+      margin: 0;
+      font-weight: bold;
+      color: #354a82;
+    }
+    .logo-card span {
+      font-size: 0.96em;
+      font-weight: 400;
+      color: #5e6a99;
+    }
+    .logo-card p {
+      font-size: 0.91em;
+      margin-top: 7px;
+      color: #26325e;
+      font-style: italic;
+    }
+    .biografi-section {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      margin: 45px 0 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: #f9fafb;
+      padding: 30px 16px;
+      border-radius: 18px;
+      box-shadow: 0 6px 24px #0031a515;
+    }
+    .biografi-section img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 24px #0077c220;
+      border: 4px solid #fff3;
+      background: #e0eafc;
+    }
+    .bio-desc {
+      font-size: 1.11em;
+      color: #26325e;
+      line-height: 1.8;
+      max-width: 470px;
+      min-width: 200px;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    footer {
+      text-align: center;
+      padding: 18px 10px;
+      color: #557;
+      background: #eaf1fd;
+      border-radius: 0 0 18px 18px;
+    }
+    /* AUTH MODAL */
+    #auth-modal {
+      position: fixed;
+      top: 0; left:0;
+      width: 100vw; height: 100vh;
+      background: #19264ae8;
+      z-index: 21;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #auth-modal .auth-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 38px 40px;
+      text-align: center;
+      box-shadow: 0 6px 28px 4px #001c232f;
+      max-width: 330px;
+    }
+    #auth-modal input {
+      width: 93%;
+      padding: 13px 9px;
+      margin: 13px 0 20px;
+      border-radius: 7px;
+      border: 1.1px solid #b0bedb;
+      background: #f4f7fe;
+      font-size: 1.05em;
+      outline: none;
+      transition: border .16s;
+      color: #3e4969;
+    }
+    #auth-modal input:focus {
+      border-color: #5e72e4;
+      background: #e3ebfa;
+    }
+    #auth-modal button {
+      background: linear-gradient(90deg,#5e72e4,#39b69a);
+      color:white;
+      border:none;
+      border-radius:6px;
+      font-size:1.1em;
+      padding:11px 30px;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 600;
+      transition: background 0.19s;
+      cursor: pointer;
+      margin-bottom: 9px;
+    }
+      body.locked {
+        overflow: hidden;
+        touch-action: none;
+      }
+    #auth-modal .error-msg {
+      color: #c82333;
+      font-size: .98em;
+      margin-bottom: 7px;
+      min-height: 24px;
+      display: block;
+    }
+    /* Animation for scroll-in element */
+    [data-aos] { opacity: 0; transition-property: opacity,transform; }
+    [data-aos].aos-animate { opacity: 1; }
+    @media (max-width:650px) {
+      .main-wrapper, .biografi-section { padding: 16px 4px; }
+      .logo-list { gap:22px; }
+      .biografi-section { flex-direction: column; align-items: stretch; }
+      .bio-desc { max-width: 98vw; font-size: .98em; }
+      header {padding: 23px 4px 12px;}
+      .animated-name {font-size:1.5em;}
+    }
+  </style>
+</head>
+<body>
+  <div id="auth-modal">
+    <form class="auth-card" id="login-form" autocomplete="off" onsubmit="return false">
+    <form class="auth-card" id="login-form" autocomplete="off">
+      <h2>Masuk ke Web</h2>
+      <span class="error-msg" id="login-error">&nbsp;</span>
+      <input type="email" id="email-input" required autocomplete="off" placeholder="Masukkan email izin admin"/>
+      <button type="submit">Masuk</button>
+      <div style="font-size:.93em;color:#709;opacity:.65;margin-top:15px;">Email diatur oleh admin.<br>Contoh: user@admin.com</div>
+    </form>
+  </div>
+  <header>
+    <div class="animated-name" id="fajri-name">Fajriansyah adithama</div>
+    <div style="font-size:1.13em;margin-top:7px;opacity:0.86;">Selamat datang di Web Universitas Indonesia Terbaik</div>
+  </header>
+  <div class="main-wrapper">
+    <section>
+      <h2 style="text-align:center;margin-bottom:20px;color:#2b3991" data-aos="fade-down">Daftar Universitas Top Indonesia</h2>
+      <div class="logo-list">
+        <div class="logo-card" data-aos="zoom-in">
+          <img src="https://upload.wikimedia.org/wikipedia/id/0/0a/Institut_Teknologi_Sepuluh_Nopember.png" alt="Logo ITS">
+          <h3>ITS</h3>
+          <span>Surabaya</span>
+          <p>Institut Teknologi Sepuluh Nopember, fokus pada sains & teknologi.</p>
+        </div>
+        <div class="logo-card" data-aos="zoom-in" data-aos-delay="100">
+          <img src="https://upload.wikimedia.org/wikipedia/id/thumb/0/0b/Lambang_ITB.svg/1200px-Lambang_ITB.svg.png" alt="Logo ITB">
+          <h3>ITB</h3>
+          <span>Bandung</span>
+          <p>Institut Teknologi Bandung, kampus teknik & seni paling tua di Indonesia.</p>
+        </div>
+        <div class="logo-card" data-aos="zoom-in" data-aos-delay="200">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/9/94/Logo_ui_utama.png" alt="Logo UI">
+          <h3>UI</h3>
+          <span>Depok/Jakarta</span>
+          <p>Universitas Indonesia, kampus riset & inovasi internasional.</p>
+        </div>
+        <div class="logo-card" data-aos="zoom-in" data-aos-delay="300">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/LOGO_UGM_BARU.png/1024px-LOGO_UGM_BARU.png" alt="Logo UGM">
+          <h3>UGM</h3>
+          <span>Yogyakarta</span>
+          <p>Universitas Gadjah Mada, kampus kerakyatan tertua di Jogja.</p>
+        </div>
+        <!-- Add more universities if you want -->
+        <div class="logo-card" data-aos="zoom-in" data-aos-delay="400">
+          <img src="https://upload.wikimedia.org/wikipedia/id/9/9f/Logo_Universitas_Brawijaya.svg" alt="Logo UB">
+          <h3>UB</h3>
+          <span>Malang</span>
+          <p>Universitas Brawijaya, unggulan bidang pertanian & teknik.</p>
+        </div>
+      </div>
+    </section>
+    <section class="biografi-section" data-aos="fade-right">
+      <img id="profile-photo" src="https://i.ibb.co/njWQPN8/avatar-example.jpg" alt="Foto Fajriansyah Adithama">
+      <div class="bio-desc">
+        <h3 style="margin-top:0;">Biografi Singkat</h3>
+        <p>Nama saya <b>Fajriansyah Adithama</b>, seorang pemuda kreatif yang menyukai dunia teknologi dan pendidikan. Saya memiliki semangat untuk terus belajar dan berbagi ilmu, serta aktif dalam berbagai kegiatan kampus.</p>
+        <p>Lulusan SMA dengan minat utama di bidang IT, web programming, dan pengembangan aplikasi. Senang berjejaring, eksplorasi software baru, dan senantiasa ingin berkontribusi untuk kemajuan ilmu pengetahuan di Indonesia.</p>
+        <p style="margin-bottom:0;color:#456">"Menuju masa depan cerah bersama inovasi & teknologi!"</p>
+      </div>
+    </section>
+  </div>
+  <footer>
+    &copy; 2026 &mdash; Fajriansyah Adithama | Web Universitas Indonesia
+  </footer>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // ======== EMAIL LOGIN LOGIC ========
+    // Email ini wajib diubah admin!
+    const allowedEmails = [
+      "user@admin.com",
+      "fajriansyah@email.com",
+      "mahasiswa@univ.ac.id",
+      "syahwinasaleh@email.com"
+      // Tambah email lain sesuai kebutuhan
+    ];
+    const authModal = document.getElementById('auth-modal');
+    const loginForm = document.getElementById('login-form');
+    const emailInput = document.getElementById('email-input');
+    const loginError = document.getElementById('login-error');
+    // Jika sesi login ditemukan, langsung masuk:
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      authModal.style.display = "none";
+    }
+    loginForm.onsubmit = function() {
+      document.body.classList.remove('locked');
+      let email = emailInput.value.trim().toLowerCase();
+      document.body.classList.add('locked');
+      authModal.style.display = 'flex';
+      if(!email){
+    loginForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+        return false;
+      }
+      if (allowedEmails.includes(email)) {
+        localStorage.setItem("isLoggedIn", "true");
+        authModal.style.display = "none";
+        loginError.textContent = "";
+      } else {
+        loginError.textContent = "Email tidak terdaftar/diizinkan admin!";
+        document.body.classList.remove('locked');
+        emailInput.value="";
+        setTimeout(() => loginError.textContent="&nbsp;", 2500);
+      }
+      return false;
+    }
+    // Double protection: block wheel scroll before login
+      return false;
+      if(authModal.style.display!=="none") e.preventDefault();
+    }, {passive:false});
+    // ======== NAMA ANIMASI ========
+    // Untuk animasi "ketik" efek pada nama
+    function typingEffect(element, text, speed){
+      let idx = 0;
+      function type() {
+        if (idx < text.length){
+          element.innerHTML = text.slice(0, idx+1) + '<span style="border-right:2.5px solid #ffd600;padding-left:1.5px"></span>';
+          idx++; setTimeout(type, speed);
+        } else {
+          element.textContent = text;
+        }
+      }
+      element.textContent = "";
+      type();
+    }
+    setTimeout(() => typingEffect(document.getElementById('fajri-name'), 'Fajriansyah adithama', 73), 480);
+
+    // ======== AOS ANIMATE ON SCROLL LIBRARY ========
+    AOS.init({
+      duration: 800, // animation duration
+      offset: 80,
+    });
+
+    // ======== GANTI FOTO PROFIL (opsional) ========
+    // Nanti upload di imgbb/imgur/dll, lalu edit src di bawah (atau biarkan default)
+    // document.getElementById("profile-photo").src = "LINK_FOTO_KAMU";
+  </script>
+</body>
+</html>

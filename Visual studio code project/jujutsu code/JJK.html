@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jujutsu Kaisen: Sorcerer Simulator v1.0</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #video_container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            transition: transform 0.1s ease-out; /* Untuk efek screen shake */
+        }
+        video { display: none; }
+        canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            transform: scaleX(-1);
+            object-fit: cover;
+        }
+        /* UI Layer */
+        #ui-layer {
+            position: absolute;
+            top: 20px; left: 20px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #status {
+            font-size: 22px;
+            font-weight: bold;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc;
+            margin-bottom: 5px;
+        }
+        #technique-name {
+            font-size: 45px;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px currentColor;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            transform: scale(0.9);
+        }
+        #technique-name.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* Panduan Jurus / Cheat Sheet */
+        #cheat-sheet {
+            position: absolute;
+            bottom: 20px; left: 20px;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            font-size: 13px;
+            line-height: 1.6;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #cheat-sheet h3 { margin: 0 0 8px 0; color: #ff0055; font-size: 15px; }
+        .jurus-item { display: flex; justify-content: space-between; gap: 20px; }
+        .jurus-name { color: #fff; font-weight: bold; }
+        .jurus-sign { color: #aaa; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div id="video_container">
+        <video id="input_video" autoplay playsinline></video>
+        <canvas id="output_canvas"></canvas>
+    </div>
+
+    <div id="ui-layer">
+        <div id="status">Mengumpulkan Energi Kutukan...</div>
+        <div id="technique-name"></div>
+    </div>
+
+    <div id="cheat-sheet">
+        <h3>🤞 PANDUAN SEGEL TANGAN (JUJUTSU)</h3>
+        <div class="jurus-item"><span class="jurus-name">🔵 BLUE (Gojo)</span> <span class="jurus-sign">1 Tangan: Jari Telunjuk & Tengah ke atas (Peace)</span></div>
+        <div class="jurus-item"><span class="jurus-name">🔴 RED (Gojo)</span> <span class="jurus-sign">1 Tangan: Jepit Jempol & Telunjuk (Pinch)</span></div>
+        <div class="jurus-item"><span class="jurus-name">🌌 INFINITE VOID</span> <span class="jurus-sign">1 Tangan: Rapatkan Jari Telunjuk & Tengah kuat-kuat</span></div>
+        <div class="jurus-item"><span class="jurus-name">⚔️ DISMANTLE (Sukuna)</span> <span class="jurus-sign">1 Tangan: Buka seluruh 5 jari lebar-lebar</span></div>
+        <div class="jurus-item"><span class="jurus-name">⛩️ MALEVOLENT SHRINE</span> <span class="jurus-sign">2 Tangan: Dekatkan kedua pergelangan tangan</span></div>
+        <div class="jurus-item"><span class="jurus-name">🎰 IDLE DEATH GAMBLE</span> <span class="jurus-sign">2 Tangan: Satukan telapak tangan (Posisi Berdoa)</span></div>
+        <div class="jurus-item"><span class="jurus-name">🌟 STAR RAGE (Yuki)</span> <span class="jurus-sign">1 Tangan: Kepalkan tangan rapat-rapat</span></div>
+    </div>
+
+    <script>
+        const videoElement = document.getElementById('input_video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const container = document.getElementById('video_container');
+        const statusText = document.getElementById('status');
+        const techName = document.getElementById('technique-name');
+
+        function resizeCanvas() {
+            canvasElement.width = window.innerWidth;
+            canvasElement.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let particles = [];
+        let shakeTime = 0;
+
+        function triggerShake(duration) { shakeTime = duration; }
+
+        // --- CLASS PARTIKEL MULTI-EFEK ---
+        class JJKParticle {
+            constructor(x, y, color, type) {
+                this.x = x; this.y = y;
+                this.color = color; this.type = type;
+                this.life = 1.0;
+                this.size = Math.random() * 6 + 2;
+                
+                if (type === 'blue') { // Menarik ke dalam
+                    let angle = Math.random() * Math.PI * 2;
+                    let radius = Math.random() * 150 + 50;
+                    this.x = x + Math.cos(angle) * radius;
+                    this.y = y + Math.sin(angle) * radius;
+                    this.vx = -Math.cos(angle) * 6;
+                    this.vy = -Math.sin(angle) * 6;
+                    this.decay = 0.03;
+                } else if (type === 'red') { // Meledak ke luar
+                    let angle = Math.random() * Math.PI * 2;
+                    let speed = Math.random() * 12 + 4;
+                    this.vx = Math.cos(angle) * speed;
+                    this.vy = Math.sin(angle) * speed;
+                    this.decay = 0.02;
+                } else if (type === 'void') { // Lingkaran kosmik mengembang
+                    this.vx = (Math.random() - 0.5) * 2;
+                    this.vy = (Math.random() - 0.5) * 2;
+                    this.size = Math.random() * 20 + 5;
+                    this.decay = 0.015;
+                } else if (type === 'slash') { // Garis tebasan tajam
+                    this.vx = (Math.random() - 0.5) * 50;
+                    this.vy = (Math.random() - 0.5) * 50;
+                    this.size = Math.random() * 120 + 60;
+                    this.decay = 0.07;
+                    this.angle = Math.random() * Math.PI * 2;
+                } else if (type === 'gamble') { // Bola casino neon naik ke atas
+                    this.vx = (Math.random() - 0.5) * 8;
+                    this.vy = -Math.random() * 10 - 2;
+                    this.decay = 0.02;
+                } else if (type === 'star') { // Aura emas padat berputar
+                    let angle = Math.random() * Math.PI * 2;
+                    this.vx = Math.cos(angle) * 4;
+                    this.vy = Math.sin(angle) * 4;
+                    this.size = Math.random() * 15 + 5;
+                    this.decay = 0.025;
+                }
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                ctx.fillStyle = this.color;
+
+                if (this.type === 'slash') {
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.angle);
+                    ctx.beginPath();
+                    ctx.moveTo(-this.size/2, 0); ctx.lineTo(this.size/2, 0);
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 4;
+                    ctx.stroke();
+                } else if (this.type === 'void') {
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size / this.life, 0, Math.PI * 2);
+                    ctx.stroke();
+                } else if (this.type === 'gamble') {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Efek teks jackpot sesekali
+                    if(Math.random() < 0.02) {
+                        ctx.fillStyle = "#fff";
+                        ctx.font = "bold 14px sans-serif";
+                        ctx.fillText("777", this.x, this.y - 10);
+                    }
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        // --- SISTEM DETEKSI GEOMETRI JARI ---
+        function checkFingerUp(lm, tip, pip) { return lm[tip].y < lm[pip].y; }
+
+        function onResults(results) {
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+            // Efek Screen Shake Logic
+            if (shakeTime > 0) {
+                let dx = (Math.random() - 0.5) * 15;
+                let dy = (Math.random() - 0.5) * 15;
+                container.style.transform = `translate(${dx}px, ${dy}px)`;
+                shakeTime--;
+            } else {
+                container.style.transform = "translate(0px, 0px)";
+            }
+
+            let activeTech = "none";
+            let pX = 0, pY = 0;
+
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                statusText.innerText = "Energi Kutukan Mengalir...";
+                statusText.style.color = "#00ffcc";
+
+                // Render skeleton tracker pelacak
+                for (const landmarks of results.multiHandLandmarks) {
+                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: 'rgba(255,255,255,0.4)', lineWidth: 2});
+                    drawLandmarks(canvasCtx, landmarks, {color: '#00ffcc', lineWidth: 1, radius: 2});
+                }
+
+                // DATA TANGAN 1
+                let lm1 = results.multiHandLandmarks[0];
+                let upIndex1 = checkFingerUp(lm1, 8, 6);
+                let upMiddle1 = checkFingerUp(lm1, 12, 10);
+                let upRing1 = checkFingerUp(lm1, 16, 14);
+                let upPinky1 = checkFingerUp(lm1, 20, 18);
+
+                if (results.multiHandLandmarks.length === 1) {
+                    // Koordinat pusat efek di tangan 1 (efek cermin dihitung)
+                    pX = (1 - lm1[9].x) * canvasElement.width;
+                    pY = lm1[9].y * canvasElement.height;
+
+                    let distThumbIndex = Math.hypot(lm1[8].x - lm1[4].x, lm1[8].y - lm1[4].y);
+                    let distIndexMiddle = Math.hypot(lm1[8].x - lm1[12].x, lm1[8].y - lm1[12].y);
+
+                    // 1. INFINITE VOID (Index & Middle mepet banget, sisanya mati)
+                    if (upIndex1 && upMiddle1 && distIndexMiddle < 0.025 && !upRing1 && !upPinky1) {
+                        activeTech = "VOID";
+                    }
+                    // 2. BLUE (Index & Middle naik terpisah, ring & pinky mati)
+                    else if (upIndex1 && upMiddle1 && distIndexMiddle >= 0.025 && !upRing1 && !upPinky1) {
+                        activeTech = "BLUE";
+                        pX = (1 - lm1[8].x) * canvasElement.width; // Di ujung jari telunjuk
+                        pY = lm1[8].y * canvasElement.height;
+                    }
+                    // 3. RED (Jempol & Telunjuk mencubit)
+                    else if (distThumbIndex < 0.04) {
+                        activeTech = "RED";
+                        pX = (1 - ((lm1[8].x + lm1[4].x)/2)) * canvasElement.width;
+                        pY = ((lm1[8].y + lm1[4].y)/2) * canvasElement.height;
+                    }
+                    // 4. DISMANTLE (Semua jari kebuka lebar)
+                    else if (upIndex1 && upMiddle1 && upRing1 && upPinky1) {
+                        activeTech = "DISMANTLE";
+                    }
+                    // 5. STAR RAGE (Mengepal / Semua jari tertutup)
+                    else if (!upIndex1 && !upMiddle1 && !upRing1 && !upPinky1) {
+                        activeTech = "STAR_RAGE";
+                    }
+
+                } else if (results.multiHandLandmarks.length === 2) {
+                    // DATA TANGAN 2
+                    let lm2 = results.multiHandLandmarks[1];
+                    let upIndex2 = checkFingerUp(lm2, 8, 6);
+                    let upMiddle2 = checkFingerUp(lm2, 12, 10);
+
+                    pX = (1 - ((lm1[0].x + lm2[0].x) / 2)) * canvasElement.width;
+                    pY = ((lm1[0].y + lm2[0].y) / 2) * canvasElement.height;
+
+                    let distWrists = Math.hypot(lm1[0].x - lm2[0].x, lm1[0].y - lm2[0].y);
+                    let distPalms = Math.hypot(lm1[9].x - lm2[9].x, lm1[9].y - lm2[9].y);
+
+                    // 6. IDLE DEATH GAMBLE (Telapak tangan nempel / Berdoa)
+                    if (distPalms < 0.08 && upIndex1 && upIndex2) {
+                        activeTech = "GAMBLE";
+                    }
+                    // 7. MALEVOLENT SHRINE (Pergelangan tangan mepet bawah)
+                    else if (distWrists < 0.18) {
+                        activeTech = "SHRINE";
+                    }
+                }
+            } else {
+                statusText.innerText = "Mencari Energi Kutukan...";
+                statusText.style.color = "#00ffcc";
+            }
+
+            // --- ENGINE VISUALISASI JURUS ---
+            if (activeTech !== "none") {
+                techName.className = "active";
+            } else {
+                techName.className = "";
+            }
+
+            if (activeTech === "BLUE") {
+                techName.innerText = "Lapse: Blue"; techName.style.color = "#0055ff";
+                for(let i=0; i<8; i++) particles.push(new JJKParticle(pX, pY, '#0055ff', 'blue'));
+                particles.push(new JJKParticle(pX, pY, '#ffffff', 'blue'));
+            } 
+            else if (activeTech === "RED") {
+                techName.innerText = "Reversal: Red"; techName.style.color = "#ff0033";
+                for(let i=0; i<10; i++) particles.push(new JJKParticle(pX, pY, '#ff0033', 'red'));
+                particles.push(new JJKParticle(pX, pY, '#ffffff', 'red'));
+            } 
+            else if (activeTech === "VOID") {
+                techName.innerText = "Domain Expansion: Infinite Void"; techName.style.color = "#ffffff";
+                triggerShake(2);
+                canvasCtx.fillStyle = "rgba(10, 0, 20, 0.6)";
+                canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+                for(let i=0; i<3; i++) {
+                    particles.push(new JJKParticle(pX, pY, '#a600ff', 'void'));
+                    particles.push(new JJKParticle(pX, pY, '#ffffff', 'void'));
+                }
+            } 
+            else if (activeTech === "DISMANTLE") {
+                techName.innerText = "Dismantle"; techName.style.color = "#00ffff";
+                if(Math.random() < 0.3) {
+                    particles.push(new JJKParticle(pX + (Math.random()-0.5)*200, pY + (Math.random()-0.5)*200, '#ffffff', 'slash'));
+                }
+            } 
+            else if (activeTech === "SHRINE") {
+                techName.innerText = "Domain: Malevolent Shrine"; techName.style.color = "#ff0044";
+                triggerShake(4);
+                canvasCtx.fillStyle = "rgba(25, 0, 5, 0.7)";
+                canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+                for(let i=0; i<6; i++) {
+                    let rx = Math.random() * canvasElement.width;
+                    let ry = Math.random() * canvasElement.height;
+                    particles.push(new JJKParticle(rx, ry, '#ff0033', 'slash'));
+                    particles.push(new JJKParticle(rx, ry, '#111111', 'slash'));
+                }
+            } 
+            else if (activeTech === "GAMBLE") {
+                techName.innerText = "Domain: Idle Death Gamble"; techName.style.color = "#ff00ff";
+                triggerShake(1);
+                for(let i=0; i<5; i++) {
+                    particles.push(new JJKParticle(pX + (Math.random()-0.5)*100, pY, '#ff00ff', 'gamble'));
+                    particles.push(new JJKParticle(pX + (Math.random()-0.5)*100, pY, '#00ffff', 'gamble'));
+                }
+            } 
+            else if (activeTech === "STAR_RAGE") {
+                techName.innerText = "Star Rage: Bom-Ba-Ye"; techName.style.color = "#ffcc00";
+                triggerShake(2);
+                for(let i=0; i<8; i++) {
+                    particles.push(new JJKParticle(pX, pY, '#ffaa00', 'star'));
+                    particles.push(new JJKParticle(pX, pY, '#ffffff', 'star'));
+                }
+            }
+
+            // Update & Render All Particles
+            canvasCtx.globalCompositeOperation = 'lighter';
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw(canvasCtx);
+                if (particles[i].life <= 0) particles.splice(i, 1);
+            }
+            canvasCtx.globalCompositeOperation = 'source-over';
+            canvasCtx.restore();
+        }
+
+        // --- SETUP HANDS TRACKING PRO ---
+        const hands = new Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+        hands.setOptions({
+            maxNumHands: 2,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.6,
+            minTrackingConfidence: 0.6
+        });
+        hands.onResults(onResults);
+
+        const camera = new Camera(videoElement, {
+            onFrame: async () => { await hands.send({image: videoElement}); },
+            width: 1280, height: 720
+        });
+        camera.start();
+    </script>
+</body>
+</html>

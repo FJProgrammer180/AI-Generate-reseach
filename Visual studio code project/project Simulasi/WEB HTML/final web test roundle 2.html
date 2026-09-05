@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Super Dashboard by Fajriansyah Adithama</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    html, body { margin:0;padding:0;min-height:100vh;}
+    body { 
+      font-family: 'Montserrat', Arial, sans-serif;
+      background:linear-gradient(125deg,#f7faff,#fffbe8 85%) fixed;
+      color:#113;
+    }
+    #auth-modal{
+      min-height:100vh;width:100vw;position:fixed;top:0;left:0;z-index:999;
+      display:flex;align-items:center;justify-content:center;background:#131d2eca;
+    }
+    .auth-card {
+      background: #fff;border-radius: 17px;padding:34px 30px;text-align:center;
+      box-shadow:0 10px 35px #4481e766;min-width:320px;
+    }
+    .auth-card input[type="email"] {
+      width:90%;padding:11px 9px;margin:16px 0 14px 0;border-radius:7px;
+      border:1.2px solid #bdd1eb;font-size:1.09em;outline:none;
+    }
+    .auth-card button{
+      background: linear-gradient(90deg,#14aaff 70%,#ffe466 100%);
+      color:#222;
+      border:none;padding:8.5px 44px;border-radius:8px;font-weight:700;
+      font-size:1.08em;box-shadow:0 4px 16px #7be9de26;cursor:pointer;
+      margin-bottom:8px;
+      transition:.13s;
+    }
+    .auth-card button:hover{
+      background: linear-gradient(90deg,#ffe466,#14aaff);
+      color:#003360;
+    }
+    .error {color:#ef476f;height:18px;font-size:.97em;}
+    /* Main */
+    .container {display:none;max-width:750px;margin:55px auto 30px;background:#fffbe9de;
+      border-radius:18px;box-shadow:0 8px 38px #ddeffa42;padding:39px 17px;}
+    .headline{
+      font-size:2em;margin-bottom:10px;font-weight:800;
+      background: linear-gradient(80deg, #0ab, #ec9b32,#eae924);
+      color:transparent;
+      -webkit-background-clip:text;background-clip:text;
+      font-family:monospace,'Montserrat',Arial,sans-serif;
+    }
+    .online-list {margin:27px 0 17px;color: #119;}
+    #admin-badge {
+      display:inline-block;background:#ffe466;color:#243;padding:2px 11px 3px 11px;
+      border-radius:12px;margin-left:6px;font-weight:700;font-size:.84em;
+      letter-spacing:.6px;box-shadow:0 2px 8px #ff9f0011;
+      margin-right:4px;vertical-align:middle;font-family:"Montserrat",arial,sans-serif;
+    }
+    /* IG & Chatbot box*/
+    #ig-link, #ai-chat-panel{display:none;text-align:center;margin:18px 0;}
+    #ig-link a {
+      color: #fff;
+      background: linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);
+      padding: 8px 24px 8px 10px;border-radius:15px;font-weight:bold;text-decoration: none;
+    }
+    #ig-link img {width:24px;margin-right:7px;vertical-align:middle;}
+    .chatbot-link a{
+      color:#fff;background:#0ab;border-radius:7px;text-decoration:none;padding:8px 22px;font-weight:600;transition:.14s;margin:2px 6px;}
+    .chatbot-link a:hover{background:#ffe466;color:#0ab;}
+    .schedule-container{padding:14px 0;}
+    .schedule-list {list-style:none;padding-left:0;}
+    .schedule-item{margin-bottom:5px;}
+    .remove-btn {margin-left:6px;color:#e62;border:0;background:0;cursor:pointer;}
+    /* Theme toggle */
+    .theme-toggle {
+      position:fixed;bottom:30px;right:30px;z-index:109;background:#fff;
+      color:#146;padding:2px 0 0 0;font-size:1.2em;width:35px;height:35px;
+      border-radius:50%;box-shadow:0 2px 13px #42e9c517;border:0;cursor:pointer;}
+    .theme-toggle:hover{background:#ffe466;color:#083;}
+    @media (max-width:700px){
+      .container{padding:11px 2vw;}
+      .auth-card{min-width:80vw;}
+    }
+    /* Perkuat cerah UI */
+    body, .container {background:#fffbe9;}
+  </style>
+</head>
+<body>
+  <div id="auth-modal">
+    <form class="auth-card" id="login-form" autocomplete="off" onsubmit="return false">
+      <div class="headline">Masuk Dashboard</div>
+      <div class="error" id="login-error">&nbsp;</div>
+      <input type="email" id="email-input" required autocomplete="off" placeholder="Masukkan email Anda"/>
+      <button type="submit">Masuk</button>
+      <div style="margin-top:14px;font-size:.98em;color:#76a;">
+        Siapapun bisa daftar.<br/>
+      </div>
+    </form>
+  </div>
+
+  <button class="theme-toggle" id="theme-toggle-btn" title="Ganti Mode">&#9788;</button>
+  <div class="container" id="main-app">
+    <div class="headline">Super Dashboard</div>
+    <!-- ONLINE LIST -->
+    <div class="online-list" id="online-list"></div>
+    <div id="ig-link">
+      <a href="https://instagram.com/Fajriansyah.adithama" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="IG">
+        @Fajriansyah.adithama
+      </a>
+    </div>
+    <div class="schedule-container">
+      <b>Jadwal Pribadi:</b>
+      <ul class="schedule-list" id="schedule-list"></ul>
+      <form id="schedule-form" style="margin-top:10px;">
+        <input type="date" id="sched-date" required>
+        <input type="time" id="sched-time" required>
+        <input type="text" id="sched-task" required placeholder="Tulis kegiatan...">
+        <button type="submit">+</button>
+      </form>
+    </div>
+    <div id="ai-chat-panel">
+      <b>Chatbot AI (Admin Only):</b>
+      <div class="chatbot-link" style="margin-top:7px">
+        <a href="https://chat.openai.com" target="_blank">ChatGPT</a>
+        <a href="https://bard.google.com/" target="_blank">Gemini/Bard</a>
+        <a href="https://copilot.microsoft.com/" target="_blank">Copilot</a>
+      </div>
+    </div>
+    <div style="margin:18px 0 7px"><b>Profil:</b> Fajriansyah Adithama</div>
+  </div>
+  <script>
+    // ----------------- CONFIG ADMIN -------------------
+    const ADMIN_EMAILS=["fajriansyah@gmail.com","syahwinasaleh@gmail.com"];
+    // ----------------- THEME --------------------------
+    let mode = localStorage.getItem('theme') || 'light';
+    setTheme(mode);
+    document.getElementById('theme-toggle-btn').onclick=function(){
+      setTheme(document.body.classList.contains("dark")?"light":"dark");
+    };
+    function setTheme(mode){
+      if(mode==='dark'){
+        document.body.style.background="linear-gradient(110deg,#151824,#222845) fixed";
+        document.body.classList.add('dark');
+        document.getElementById('theme-toggle-btn').innerHTML="&#9728;";
+      }else{
+        document.body.style.background="linear-gradient(125deg,#f7faff,#fffbe8 85%) fixed";
+        document.body.classList.remove('dark');
+        document.getElementById('theme-toggle-btn').innerHTML="&#9788;";
+      }
+      localStorage.setItem('theme',mode);
+    }
+    // ----------------- AUTH & SESSION ------------------
+    let userEmail = localStorage.getItem('userEmail')||"";
+    let onlineList = JSON.parse(localStorage.getItem('onlineUsers')||'{}');
+    function saveOnlineList(list){localStorage.setItem('onlineUsers',JSON.stringify(list));}
+    function renderOnlineList(){
+      let html="";
+      for(let email in onlineList){
+        let v=onlineList[email],name=email.split('@')[0],
+        dot=v.status==="online"?"🟢":"🔴";
+        html += `${dot} ${name}${ADMIN_EMAILS.includes(email)?' <span id="admin-badge">ADMIN</span>':''} `;
+      }
+      document.getElementById('online-list').innerHTML=html||"Belum ada user online!";
+    }
+    function setOnline(email){
+      onlineList[email]={status:"online",lastUpdate:Date.now()};
+      localStorage.setItem('userEmail',email);
+      saveOnlineList(onlineList);
+      renderOnlineList();
+      showSpecialFeatures(email);
+    }
+    function setOffline(email){
+      if(onlineList[email])onlineList[email].status="offline";
+      saveOnlineList(onlineList);renderOnlineList();
+    }
+    // ----------------- JADWAL -------------------------
+    let userJadwal=[];
+    function loadJadwal(){if(!userEmail)return;
+      userJadwal=JSON.parse(localStorage.getItem('sched-'+userEmail)||"[]");
+      renderJadwal();
+    }
+    function renderJadwal(){
+      let list = document.getElementById('schedule-list');
+      if(!userJadwal.length){list.innerHTML="<li>Belum ada jadwal.</li>";return;}
+      list.innerHTML = userJadwal.map((j,i)=>
+        `<li class="schedule-item">${j.tgl} ${j.jam} • ${j.kegiatan}
+        <button class="remove-btn" onclick="window.removeJadwal(${i})" title="Hapus">&times;</button></li>`).join("")
+    }
+    document.getElementById('schedule-form').onsubmit=function(){
+      let tgl=document.getElementById('sched-date').value,jam=document.getElementById('sched-time').value,
+          kegiatan=document.getElementById('sched-task').value.trim();
+      if(kegiatan){userJadwal.push({tgl,jam,kegiatan});saveJadwal();}
+      this.reset();return false;
+    };
+    function saveJadwal(){
+      localStorage.setItem('sched-'+userEmail,JSON.stringify(userJadwal));
+      renderJadwal();
+    }
+    window.removeJadwal=function(idx){userJadwal.splice(idx,1);saveJadwal();}
+    // -------------- FITUR KHUSUS ADMIN -------------
+    function showSpecialFeatures(email){
+      // IG & AI muncul hanya jika admin
+      document.getElementById('ig-link').style.display=ADMIN_EMAILS.includes(email)?"block":"none";
+      document.getElementById('ai-chat-panel').style.display=ADMIN_EMAILS.includes(email)?"block":"none";
+    }
+    // ----------------- LOGIN FORM -------------------
+    function afterLogin(email){
+      document.getElementById('auth-modal').style.display="none";
+      document.getElementById('main-app').style.display="block";
+      setOnline(email);
+      loadJadwal();
+      showSpecialFeatures(email);
+    }
+    if(userEmail){
+      afterLogin(userEmail);
+    }
+    document.getElementById('login-form').onsubmit=function(){
+      let email = document.getElementById('email-input').value.trim().toLowerCase();
+      if(!email){
+        document.getElementById('login-error').textContent = "Email wajib diisi!";
+        return false;
+      }
+      if(!/^[\w.\-]+@\w+\.\w+/.test(email)){
+        document.getElementById('login-error').textContent = "Format email salah!";
+        return false;
+      }
+      afterLogin(email);
+      return false;
+    };
+    window.addEventListener("beforeunload",()=>setOffline(userEmail));
+    // Logout: Ctrl+Shift+O
+    window.addEventListener("keydown",e=>{
+      if(e.ctrlKey&&e.shiftKey&&e.key==="O"){
+        setOffline(userEmail);
+        localStorage.removeItem('userEmail');
+        document.getElementById("main-app").style.display="none";
+        document.getElementById("auth-modal").style.display="flex";
+        // reload is optional, just for instant reset
+        location.reload();
+      }
+    });
+  </script>
+</body>
+</html>
