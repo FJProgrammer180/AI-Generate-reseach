@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CTF Analyst Academy - offline challenge database</title>
+<meta name="description" content="A fully offline CTF training lab: 100+ challenges across 11 categories, 5 mystery campaigns, badges, XP, writeups and a procedural practice generator. All data is fictional.">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-view="dashboard">
+
+<header class="topbar">
+  <div class="brand" role="banner">
+    <div class="brand-mark mono">CTF//</div>
+    <div class="brand-text">
+      <div class="brand-name">ANALYST ACADEMY</div>
+      <div class="brand-sub mono">offline lab - fictional data only</div>
+    </div>
+  </div>
+
+  <div class="hud" aria-live="polite">
+    <div class="hud-item">
+      <span class="hud-label">LEVEL</span>
+      <span class="hud-value mono" id="hud-level">LEVEL 1</span>
+      <div class="hud-bar"><div class="hud-bar-fill" id="hud-xp-bar" style="width:0%"></div></div>
+      <span class="hud-sub mono" id="hud-rank">next level in 250 XP</span>
+    </div>
+    <div class="hud-item"><span class="hud-label">XP</span><span class="hud-value mono" id="hud-xp">0 XP</span></div>
+    <div class="hud-item"><span class="hud-label">POINTS</span><span class="hud-value mono" id="hud-points">0 PTS</span></div>
+    <div class="hud-item"><span class="hud-label">SOLVED</span><span class="hud-value mono" id="hud-solved">0</span></div>
+    <div class="hud-item"><span class="hud-label">BADGES</span><span class="hud-value mono" id="hud-badges">0/22</span></div>
+  </div>
+
+  <div class="topbar-tools">
+    <input id="global-search" class="input search" type="search" placeholder="search the database... (Enter)" aria-label="search challenges">
+    <button id="nav-daily" class="btn tiny" type="button">DAILY</button>
+    <button id="nav-random" class="btn tiny ghost" type="button">RANDOM</button>
+  </div>
+</header>
+
+<nav class="nav" aria-label="main">
+  <button class="nav-btn active" data-view="dashboard" type="button">DASHBOARD</button>
+  <button class="nav-btn" data-view="challenges" type="button">CHALLENGES</button>
+  <button class="nav-btn" data-view="campaigns" type="button">MYSTERY ARCHIVE</button>
+  <button class="nav-btn" data-view="practice" type="button">PRACTICE</button>
+  <button class="nav-btn" data-view="badges" type="button">BADGES</button>
+  <button class="nav-btn" data-view="progress" type="button">PROGRESS</button>
+  <button class="nav-btn" data-view="about" type="button">ABOUT</button>
+</nav>
+
+<main id="main">
+  <div id="view" class="view"></div>
+</main>
+
+<div id="toast-zone" class="toast-zone" aria-live="assertive"></div>
+
+<footer class="footer">
+  <div class="footer-row">
+    <span class="mono" id="footer-counts">offline database</span>
+    <span class="mono">runs from file:// with no network access</span>
+  </div>
+  <p class="footer-note">
+    SAFETY: every host, person, company, hash, credential and flag in this lab is invented for training.
+    Hostnames use the reserved <span class="mono">.invalid</span> TLD and addresses come from the documentation
+    ranges (192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24). The terminal, web labs, SQL lab and XSS sandbox are
+    simulations: <span class="mono">sudo</span> only affects an in-memory image, and no text you type is ever
+    inserted as live HTML or executed as a script. The goal is to learn analyst thinking - classify, correlate,
+    verify, document - not to gain capability against real systems.
+  </p>
+</footer>
+
+<!-- engine -->
+<script src="assets/js/challenges.js"></script>
+<!-- generated evidence payloads (see tools/gen-artifacts.js) -->
+<script src="assets/js/artifacts.js"></script>
+<!-- datasets: virtual filesystem image first, then the challenge categories -->
+<script src="assets/js/data/vfs.js"></script>
+<script src="assets/js/data/challenges-foundations.js"></script>
+<script src="assets/js/data/challenges-crypto.js"></script>
+<script src="assets/js/data/challenges-encoding.js"></script>
+<script src="assets/js/data/challenges-stego.js"></script>
+<script src="assets/js/data/challenges-forensics.js"></script>
+<script src="assets/js/data/challenges-network.js"></script>
+<script src="assets/js/data/challenges-linux.js"></script>
+<script src="assets/js/data/challenges-web.js"></script>
+<script src="assets/js/data/challenges-code.js"></script>
+<script src="assets/js/data/challenges-re.js"></script>
+<script src="assets/js/data/challenges-osint.js"></script>
+<script src="assets/js/data/challenges-campaigns.js"></script>
+<!-- app layer -->
+<script src="assets/js/renderer.js"></script>
+<script src="assets/js/weblab.js"></script>
+<script src="assets/js/terminal.js"></script>
+<script src="assets/js/state.js"></script>
+<script src="assets/js/generator.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
