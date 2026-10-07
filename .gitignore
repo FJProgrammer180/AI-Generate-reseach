@@ -1,0 +1,23 @@
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# --- node (nothing in this repo needs it, but keep it out if you add tooling) ---
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# --- python ---
+__pycache__/
+*.pyc
+
+# --- CTF Analyst Academy ---
+# exported progress snapshots are personal state, not project content
+ctf-analyst-academy/*progress*.json
+ctf-analyst-academy/*.save.json
+# never commit captured evidence or scratch dumps from a lab session
+ctf-analyst-academy/scratch/
