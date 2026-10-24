@@ -1,0 +1,2100 @@
+{
+ "generatedFrom": "ctf-analyst-academy/assets/js (CTF.DB registration order preserved)",
+ "count": 102,
+ "totalPoints": 29145,
+ "campaigns": [
+  {
+   "id": "CASE-001",
+   "title": "The First Signal",
+   "points": 1000,
+   "stages": 5
+  },
+  {
+   "id": "CASE-002",
+   "title": "The Silent Archive",
+   "points": 1200,
+   "stages": 5
+  },
+  {
+   "id": "CASE-003",
+   "title": "The Broken Terminal",
+   "points": 1500,
+   "stages": 5
+  },
+  {
+   "id": "CASE-004",
+   "title": "Network Ghost",
+   "points": 1500,
+   "stages": 5
+  },
+  {
+   "id": "CASE-005",
+   "title": "The Unknown Cipher",
+   "points": 2000,
+   "stages": 5
+  }
+ ],
+ "challenges": [
+  {
+   "id": "CRYPTO-013",
+   "title": "The First Shift",
+   "category": "Cryptography",
+   "difficulty": "Beginner",
+   "points": 50,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{SHIFT_BY_THREE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{SHIFT_BY_THREE}"
+    ],
+    "contains": true,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "ENCODE-007",
+   "title": "Dots At The Gate",
+   "category": "Encoding",
+   "difficulty": "Beginner",
+   "points": 60,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{DOTS_AND_DASHES}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "DOTS AND DASHES",
+     "DOTS AND DASHES",
+     "FLAG{DOTS_AND_DASHES}"
+    ],
+    "contains": true,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "LINUX-007",
+   "title": "Where Am I?",
+   "category": "Linux",
+   "difficulty": "Beginner",
+   "points": 75,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{READ_THE_HOSTNAME_FILE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "lab-nullpoint-03,/home/analyst",
+     "lab-nullpoint-03, /home/analyst",
+     "lab-nullpoint-03"
+    ],
+    "contains": true,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-008",
+   "title": "Which Ones Are Mine?",
+   "category": "Networking",
+   "difficulty": "Beginner",
+   "points": 60,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{PRIVATE_SPACE_COUNTED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "3",
+     "3 addresses",
+     "3 of 6"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "FORENSIC-007",
+   "title": "The Wrong Extension",
+   "category": "Digital Forensics",
+   "difficulty": "Beginner",
+   "points": 80,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{MAGIC_BYTES_WIN}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "PNG",
+     "png",
+     "image/png",
+     "PNG image",
+     "a PNG image"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-008",
+   "title": "The Loud Parameter",
+   "category": "Web Security",
+   "difficulty": "Beginner",
+   "points": 70,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{QUERY_STRINGS_ARE_NOT_SECRET}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "REDACTED_FOR_TRAINING",
+     "REDACTED FOR TRAINING",
+     "FLAG{QUERY_STRINGS_ARE_NOT_SECRET}"
+    ],
+    "contains": true,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-001",
+   "title": "The Shifted Message",
+   "category": "Cryptography",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{SHIFT_SEVEN_RECOVERED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{SHIFT_SEVEN_RECOVERED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-002",
+   "title": "Old Roman Secret",
+   "category": "Cryptography",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{ROT13_IS_NOT_ENCRYPTION}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{ROT13_IS_NOT_ENCRYPTION}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-003",
+   "title": "Five Letters",
+   "category": "Cryptography",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{VIGENERE_FALLS_TO_A_CRIB}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{VIGENERE_FALLS_TO_A_CRIB}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-004",
+   "title": "XOR Gate",
+   "category": "Cryptography",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{XOR_WITH_A_CONSTANT}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{XOR_WITH_A_CONSTANT}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-005",
+   "title": "Broken Hex",
+   "category": "Cryptography",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{HEX_IS_JUST_BYTES}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{HEX_IS_JUST_BYTES}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-006",
+   "title": "Binary Whisper",
+   "category": "Cryptography",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{BITS_BECOME_TEXT}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{BITS_BECOME_TEXT}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-007",
+   "title": "Layer Cake",
+   "category": "Cryptography",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{THREE_LAYERS_DEEP}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{THREE_LAYERS_DEEP}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-008",
+   "title": "Hash Detective",
+   "category": "Cryptography",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{HASH_LENGTH_IS_A_HINT_NOT_PROOF}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "MD5,SHA1,SHA256,SHA512",
+     "MD5, SHA1, SHA256, SHA512",
+     "FLAG{HASH_LENGTH_IS_A_HINT_NOT_PROOF}"
+    ],
+    "contains": true,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-009",
+   "title": "Salted Mystery",
+   "category": "Cryptography",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{SALT_7X2}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{SALT_7X2}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-010",
+   "title": "Cipher Archive",
+   "category": "Cryptography",
+   "difficulty": "Hard",
+   "points": 400,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{FOUR_LOCKS_ONE_KEY}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{FOUR_LOCKS_ONE_KEY}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-011",
+   "title": "Two Pads, One Key",
+   "category": "Cryptography",
+   "difficulty": "Expert",
+   "points": 700,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{NEVER_REUSE_A_ONE_TIME_PAD}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{NEVER_REUSE_A_ONE_TIME_PAD}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CRYPTO-012",
+   "title": "The Coprime Lock",
+   "category": "Cryptography",
+   "difficulty": "Expert",
+   "points": 650,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{ENUMERATE_THE_SMALL_KEYSPACE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{ENUMERATE_THE_SMALL_KEYSPACE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "ENCODE-001",
+   "title": "Base64 Rookie",
+   "category": "Encoding",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{BASE64_IS_NOT_A_CIPHER}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{BASE64_IS_NOT_A_CIPHER}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "ENCODE-002",
+   "title": "URL Trail",
+   "category": "Encoding",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{URL_DECODE_ME}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{URL_DECODE_ME}",
+     "https://portal.lab.nullpoint.invalid/ticket?id=4471&note=FLAG{URL DECODE ME}&owner=analyst"
+    ],
+    "contains": true,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "ENCODE-003",
+   "title": "ASCII Grid",
+   "category": "Encoding",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{DECIMAL_IS_STILL_TEXT}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{DECIMAL_IS_STILL_TEXT}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "ENCODE-004",
+   "title": "Binary Chain",
+   "category": "Encoding",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{BITS_WITH_NO_SPACES}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{BITS_WITH_NO_SPACES}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "ENCODE-005",
+   "title": "Triple Encoding",
+   "category": "Encoding",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{THREE_LAYERS_THREE_TOOLS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{THREE_LAYERS_THREE_TOOLS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "ENCODE-006",
+   "title": "Encoding Maze",
+   "category": "Encoding",
+   "difficulty": "Hard",
+   "points": 350,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{REVERSED_THEN_ROTATED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{REVERSED_THEN_ROTATED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "STEGO-001",
+   "title": "Hidden Pixel",
+   "category": "Steganography",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{FIRST_ROW_FIRST_BIT}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{FIRST_ROW_FIRST_BIT}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "STEGO-002",
+   "title": "Last Bit",
+   "category": "Steganography",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{LAST_BIT_LOUDEST}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "0 1 0 0 0 1 1 0",
+     "FLAG{LAST_BIT_LOUDEST}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "STEGO-003",
+   "title": "Noisy Picture",
+   "category": "Steganography",
+   "difficulty": "Medium",
+   "points": 300,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{NOISE_HIDES_SEVEN}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "7",
+     "FLAG{NOISE_HIDES_SEVEN}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "STEGO-004",
+   "title": "Double Layer",
+   "category": "Steganography",
+   "difficulty": "Hard",
+   "points": 450,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{TWO_LAYERS_ONE_IMAGE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{TWO_LAYERS_ONE_IMAGE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "STEGO-005",
+   "title": "Archive Picture",
+   "category": "Steganography",
+   "difficulty": "Hard",
+   "points": 500,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{ARCHIVE_IN_THE_TAIL}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{ARCHIVE_IN_THE_TAIL}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "FORENSIC-001",
+   "title": "Strange File",
+   "category": "Digital Forensics",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{MAGIC_BYTES_DO_NOT_LIE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "PNG",
+     "FLAG{MAGIC_BYTES_DO_NOT_LIE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "FORENSIC-002",
+   "title": "Suspicious Strings",
+   "category": "Digital Forensics",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{STRINGS_FIND_IT}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{STRINGS_FIND_IT}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "FORENSIC-003",
+   "title": "Metadata Trail",
+   "category": "Digital Forensics",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{METADATA_OUTLIVES_INTENT}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{METADATA_OUTLIVES_INTENT}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "FORENSIC-004",
+   "title": "Hex Detective",
+   "category": "Digital Forensics",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{HEX_READER_EYES}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{HEX_READER_EYES}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "FORENSIC-005",
+   "title": "Timeline",
+   "category": "Digital Forensics",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{TIMELINE_BEFORE_THEORY}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "E-01,E-02,E-03,E-04,E-05",
+     "E-01, E-02, E-03, E-04, E-05"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "FORENSIC-006",
+   "title": "Broken Evidence",
+   "category": "Digital Forensics",
+   "difficulty": "Hard",
+   "points": 400,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{EVIDENCE_REASSEMBLED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{EVIDENCE_REASSEMBLED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "FORENSIC-011",
+   "title": "Cold Memory",
+   "category": "Digital Forensics",
+   "difficulty": "Expert",
+   "points": 800,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{COLD_MEMORY_WARM_LEADS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{COLD_MEMORY_WARM_LEADS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-001",
+   "title": "Identify the IP",
+   "category": "Networking",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{EVERY_ADDRESS_HAS_A_ROLE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "PRIVATE,PUBLIC,LOOPBACK,PRIVATE,MULTICAST,BROADCAST",
+     "FLAG{EVERY_ADDRESS_HAS_A_ROLE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-002",
+   "title": "Subnet Rookie",
+   "category": "Networking",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{SUBNET_MATH_IS_FAST}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "254,62,14,2",
+     "FLAG{SUBNET_MATH_IS_FAST}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-003",
+   "title": "CIDR Challenge",
+   "category": "Networking",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{CIDR_IS_BITWISE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "192.168.20.128,192.168.20.191,62",
+     "10.10.5.64,10.10.5.79,14",
+     "192.168.20.128,192.168.20.191,62 | 10.10.5.64,10.10.5.79,14",
+     "FLAG{CIDR_IS_BITWISE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-004",
+   "title": "Port Detective",
+   "category": "Networking",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{PORTS_ARE_CONVENTIONS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "SSH,DNS,HTTPS,RDP,SMTP,HTTP-ALT",
+     "FLAG{PORTS_ARE_CONVENTIONS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-005",
+   "title": "Packet Story",
+   "category": "Networking",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{PACKETS_TELL_A_STORY}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "TLS,443,txt.lab.nullpoint.invalid",
+     "TLS, 443, txt.lab.nullpoint.invalid",
+     "FLAG{PACKETS_TELL_A_STORY}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-006",
+   "title": "DNS Mystery",
+   "category": "Networking",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{TXT_RECORDS_CARRY_DATA}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{TXT_RECORDS_CARRY_DATA}",
+     "TXT,_ctf.lab.nullpoint.invalid",
+     "_ctf.lab.nullpoint.invalid,TXT"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-007",
+   "title": "Network Case",
+   "category": "Networking",
+   "difficulty": "Hard",
+   "points": 450,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{GHOST_ON_THE_WIRE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{GHOST_ON_THE_WIRE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "NET-012",
+   "title": "Tunnel Under 53",
+   "category": "Networking",
+   "difficulty": "Expert",
+   "points": 850,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{DNS_CARRIED_THE_MESSAGE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "meet at the gate",
+     "FLAG{DNS_CARRIED_THE_MESSAGE}",
+     "meet at the gate | FLAG{DNS_CARRIED_THE_MESSAGE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "LINUX-001",
+   "title": "Find the File",
+   "category": "Linux",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{READ_THE_FILE_YOU_FOUND}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{READ_THE_FILE_YOU_FOUND}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "LINUX-002",
+   "title": "Hidden Directory",
+   "category": "Linux",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{HIDDEN_DIRS_ARE_NOT_SECRET}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{HIDDEN_DIRS_ARE_NOT_SECRET}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "LINUX-003",
+   "title": "Grep Hunter",
+   "category": "Linux",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{NEEDLE_9C31}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{NEEDLE_9C31}",
+     "9C31",
+     "9c31"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "LINUX-004",
+   "title": "Permission Puzzle",
+   "category": "Linux",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{0640_ROOT_NULLPOINT}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{0640_ROOT_NULLPOINT}",
+     "0640,svc,no"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "LINUX-005",
+   "title": "Lost Configuration",
+   "category": "Linux",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{RETRY_LIMIT_17}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{RETRY_LIMIT_17}",
+     "17"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "LINUX-006",
+   "title": "Linux Investigation",
+   "category": "Linux",
+   "difficulty": "Hard",
+   "points": 400,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{TERMINAL_REBUILT_BY_ANALYST_SEVEN}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{TERMINAL_REBUILT_BY_ANALYST_SEVEN}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "LINUX-011",
+   "title": "The Broken Terminal",
+   "category": "Linux",
+   "difficulty": "Expert",
+   "points": 750,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{198.51.100.7_SVC}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{198.51.100.7_SVC}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-001",
+   "title": "Input Inspector",
+   "category": "Web Security",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{VALIDATE_AT_THE_BOUNDARY}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "note",
+     "the note field",
+     "FLAG{VALIDATE_AT_THE_BOUNDARY}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-002",
+   "title": "Safe vs Unsafe",
+   "category": "Web Security",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{TEXTCONTENT_DOES_NOT_PARSE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "A,HTML",
+     "A, HTML",
+     "A,HTML content",
+     "FLAG{TEXTCONTENT_DOES_NOT_PARSE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-003",
+   "title": "SQL Logic Lab",
+   "category": "Web Security",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{PARAMETERS_NOT_STRINGS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "admin,' OR '1'='1",
+     "admin, ' OR '1'='1",
+     "admin,OR 1=1",
+     "FLAG{PARAMETERS_NOT_STRINGS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-004",
+   "title": "XSS Sandbox",
+   "category": "Web Security",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{SANDBOX_NOT_EXECUTE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "innerHTML,textContent",
+     "innerHTML, textContent",
+     "innerHTML,use textContent",
+     "FLAG{SANDBOX_NOT_EXECUTE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-005",
+   "title": "Parameter Puzzle",
+   "category": "Web Security",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{ALLOWLIST_THE_REDIRECT}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "next,allowlist",
+     "next, allowlist",
+     "next,domain allowlist",
+     "FLAG{ALLOWLIST_THE_REDIRECT}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-006",
+   "title": "Authentication Logic",
+   "category": "Web Security",
+   "difficulty": "Hard",
+   "points": 400,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{STRICT_COMPARE_ALWAYS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "3,0",
+     "line 3, 0",
+     "3,'0'",
+     "FLAG{STRICT_COMPARE_ALWAYS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-007",
+   "title": "Web Security Case",
+   "category": "Web Security",
+   "difficulty": "Hard",
+   "points": 500,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{TRIAGE_BEFORE_YOU_FIX}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "F1>F2>F3>F4",
+     "F1>F2>F4>F3",
+     "FLAG{TRIAGE_BEFORE_YOU_FIX}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "WEB-012",
+   "title": "The Unsigned Session",
+   "category": "Web Security",
+   "difficulty": "Expert",
+   "points": 900,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{ALGORITHM_MUST_BE_PINNED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{ALGORITHM_MUST_BE_PINNED}",
+     "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJhbmFseXN0LTciLCJyb2xlIjoiYWRtaW4iLCJsYWIiOiJudWxscG9pbnQuaW52YWxpZCIsImV4cCI6MTg5MzQ1NjAwMH0."
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CODE-001",
+   "title": "Fix the Function",
+   "category": "Programming",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{BOUNDS_AND_CONDITIONS}",
+   "answer": {
+    "type": "code",
+    "tests": [
+     {
+      "call": "sumEven([4, 7, 12, 9, 20, 33, 8, 15, 26, 1])",
+      "expect": 70
+     },
+     {
+      "call": "sumEven([])",
+      "expect": 0
+     },
+     {
+      "call": "sumEven([1, 3, 5])",
+      "expect": 0
+     },
+     {
+      "call": "sumEven([2, 2, 2])",
+      "expect": 6
+     },
+     {
+      "call": "sumEven([-4, 7, -6])",
+      "expect": -10
+     }
+    ]
+   }
+  },
+  {
+   "id": "CODE-002",
+   "title": "Find the Bug",
+   "category": "Programming",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{INITIALISE_FROM_THE_DATA}",
+   "answer": {
+    "type": "code",
+    "tests": [
+     {
+      "call": "maxOf([17, 42, 8, 99, 23, 5, 61])",
+      "expect": 99
+     },
+     {
+      "call": "maxOf([-5, -2, -9])",
+      "expect": -2
+     },
+     {
+      "call": "maxOf([7])",
+      "expect": 7
+     },
+     {
+      "call": "maxOf([3, 3, 3])",
+      "expect": 3
+     },
+     {
+      "call": "maxOf([0, -1])",
+      "expect": 0
+     }
+    ]
+   }
+  },
+  {
+   "id": "CODE-003",
+   "title": "Array Detective",
+   "category": "Programming",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{3B}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{3B}",
+     "59",
+     "0x3B"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CODE-004",
+   "title": "String Puzzle",
+   "category": "Programming",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{GNIRTS_NOEGRUS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{GNIRTS_NOEGRUS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CODE-005",
+   "title": "Algorithm Maze",
+   "category": "Programming",
+   "difficulty": "Hard",
+   "points": 350,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{CODEMAZESOLVED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{CODEMAZESOLVED}",
+     "CODEMAZESOLVED"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CODE-011",
+   "title": "The Last Seat",
+   "category": "Programming",
+   "difficulty": "Expert",
+   "points": 600,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{JOSEPHUS_SEAT_31}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{JOSEPHUS_SEAT_31}",
+     "31"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "RE-001",
+   "title": "Read the Code",
+   "category": "Reverse Engineering",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{SOURCE_IS_THE_MAP}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{SOURCE_IS_THE_MAP}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "RE-002",
+   "title": "Obfuscated String",
+   "category": "Reverse Engineering",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{CONSTANTS_ARE_NOT_SECRETS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{CONSTANTS_ARE_NOT_SECRETS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "RE-003",
+   "title": "Function Flow",
+   "category": "Reverse Engineering",
+   "difficulty": "Medium",
+   "points": 300,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{24ELNNTU}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{24ELNNTU}",
+     "24ELNNTU"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "RE-004",
+   "title": "Hidden Condition",
+   "category": "Reverse Engineering",
+   "difficulty": "Hard",
+   "points": 400,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{GATE_269}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{GATE_269}",
+     "269"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "RE-005",
+   "title": "Mini Reverse Challenge",
+   "category": "Reverse Engineering",
+   "difficulty": "Hard",
+   "points": 500,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{FIVE_STEPS_BACK}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{FIVE_STEPS_BACK}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "RE-011",
+   "title": "Stack Machine",
+   "category": "Reverse Engineering",
+   "difficulty": "Expert",
+   "points": 1000,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{VM_GHOST}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{VM_GHOST}",
+     "70,76,65,71,123,86,77,95,71,72,79,83,84,125"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "OSINT-001",
+   "title": "Username Trail",
+   "category": "OSINT",
+   "difficulty": "Easy",
+   "points": 100,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{WIDEST_FOOTPRINT_WINS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "ghostwriter_09",
+     "FLAG{WIDEST_FOOTPRINT_WINS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "OSINT-002",
+   "title": "Fake Company",
+   "category": "OSINT",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{NULLPOINT_2019_148}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "2019,148",
+     "2019, 148",
+     "FLAG{NULLPOINT_2019_148}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "OSINT-003",
+   "title": "Digital Footprint",
+   "category": "OSINT",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{GHOSTWRITER_09}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{GHOSTWRITER_09}",
+     "ghostwriter_09"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "OSINT-004",
+   "title": "Timeline Investigation",
+   "category": "OSINT",
+   "difficulty": "Medium",
+   "points": 300,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{PHISHING_FIRST}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "5,3,1,2,4",
+     "5, 3, 1, 2, 4",
+     "FLAG{PHISHING_FIRST}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "OSINT-005",
+   "title": "Investigation Case",
+   "category": "OSINT",
+   "difficulty": "Hard",
+   "points": 500,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{GHOSTWRITER_09_ON_WORKSTATION_7}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{GHOSTWRITER_09_ON_WORKSTATION_7}",
+     "ghostwriter_09 on workstation-7"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "OSINT-011",
+   "title": "The Attribution Contract",
+   "category": "OSINT",
+   "difficulty": "Expert",
+   "points": 950,
+   "campaign": null,
+   "stage": null,
+   "flag": "FLAG{ATTRIBUTION_REQUIRES_TWO_SOURCES}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "C1,C3,C5,C6",
+     "C1, C3, C5, C6",
+     "FLAG{ATTRIBUTION_REQUIRES_TWO_SOURCES}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-001-S1",
+   "title": "The First Signal - Stage 1: Encoding",
+   "category": "Mystery Archive",
+   "difficulty": "Beginner",
+   "points": 100,
+   "campaign": "CASE-001",
+   "stage": 1,
+   "flag": "FLAG{FIRST_SIGNAL_RECEIVED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "SIGNAL::FLAG{FIRST_SIGNAL_RECEIVED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-001-S2",
+   "title": "The First Signal - Stage 2: Caesar",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": "CASE-001",
+   "stage": 2,
+   "flag": "FLAG{FIRST_SIGNAL_RECEIVED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{FIRST_SIGNAL_RECEIVED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-001-S3",
+   "title": "The First Signal - Stage 3: Hex",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": "CASE-001",
+   "stage": 3,
+   "flag": "FLAG{FIRST_SIGNAL_RECEIVED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{FIRST_SIGNAL_RECEIVED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-001-S4",
+   "title": "The First Signal - Stage 4: Steganography",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": "CASE-001",
+   "stage": 4,
+   "flag": "FLAG{FIRST_SIGNAL_RECEIVED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{FIRST_SIGNAL_RECEIVED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-001-S5",
+   "title": "The First Signal - Stage 5: Final Flag",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 300,
+   "campaign": "CASE-001",
+   "stage": 5,
+   "flag": "FLAG{FIRST_SIGNAL_RECEIVED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{FIRST_SIGNAL_RECEIVED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-002-S1",
+   "title": "The Silent Archive - Stage 1: File Analysis",
+   "category": "Mystery Archive",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": "CASE-002",
+   "stage": 1,
+   "flag": "FLAG{MAGIC_AT_OFFSET_96}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "GZIP",
+     "gzip",
+     "FLAG{MAGIC_AT_OFFSET_96}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-002-S2",
+   "title": "The Silent Archive - Stage 2: Metadata",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 200,
+   "campaign": "CASE-002",
+   "stage": 2,
+   "flag": "FLAG{ARCHIVIST_THREE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "archivist-3",
+     "FLAG{ARCHIVIST_THREE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-002-S3",
+   "title": "The Silent Archive - Stage 3: Strings",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": "CASE-002",
+   "stage": 3,
+   "flag": "FLAG{OPEN_AT_DAWN}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "OPEN_AT_DAWN",
+     "FLAG{OPEN_AT_DAWN}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-002-S4",
+   "title": "The Silent Archive - Stage 4: Binary",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": "CASE-002",
+   "stage": 4,
+   "flag": "FLAG{KEY_MATCHES_OWNER}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "KEY=archivist-3",
+     "FLAG{KEY_MATCHES_OWNER}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-002-S5",
+   "title": "The Silent Archive - Stage 5: Cipher",
+   "category": "Mystery Archive",
+   "difficulty": "Hard",
+   "points": 350,
+   "campaign": "CASE-002",
+   "stage": 5,
+   "flag": "FLAG{SILENT_ARCHIVE_OPENED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "ARCHIVE OPENED AT DAWN",
+     "FLAG{SILENT_ARCHIVE_OPENED}",
+     "FLAG{SILENT_ARCHIVE_OPENED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-003-S1",
+   "title": "The Broken Terminal - Stage 1: Filesystem",
+   "category": "Mystery Archive",
+   "difficulty": "Beginner",
+   "points": 100,
+   "campaign": "CASE-003",
+   "stage": 1,
+   "flag": "FLAG{FOUND_THE_NOTE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "/var/lib/nullpoint/inbox/note.txt",
+     "FLAG{FOUND_THE_NOTE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-003-S2",
+   "title": "The Broken Terminal - Stage 2: Hidden Files",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": "CASE-003",
+   "stage": 2,
+   "flag": "FLAG{DOT_FILES_ARE_LISTED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "/home/ops/.cache/keys.txt",
+     "FLAG{DOT_FILES_ARE_LISTED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-003-S3",
+   "title": "The Broken Terminal - Stage 3: grep",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 300,
+   "campaign": "CASE-003",
+   "stage": 3,
+   "flag": "FLAG{REBUILD_KEY_7F3A9C}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "REBUILD_KEY=7F3A9C",
+     "FLAG{REBUILD_KEY_7F3A9C}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-003-S4",
+   "title": "The Broken Terminal - Stage 4: Permissions",
+   "category": "Mystery Archive",
+   "difficulty": "Hard",
+   "points": 350,
+   "campaign": "CASE-003",
+   "stage": 4,
+   "flag": "FLAG{0640_SVC_NO}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "0640,svc,NO",
+     "0640, svc, NO",
+     "0640,svc,no",
+     "FLAG{0640_SVC_NO}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-003-S5",
+   "title": "The Broken Terminal - Stage 5: Final Investigation",
+   "category": "Mystery Archive",
+   "difficulty": "Hard",
+   "points": 500,
+   "campaign": "CASE-003",
+   "stage": 5,
+   "flag": "FLAG{SVC_DAEMON_CONF_7F3A9C}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{SVC_DAEMON_CONF_7F3A9C}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-004-S1",
+   "title": "Network Ghost - Stage 1: IP Analysis",
+   "category": "Mystery Archive",
+   "difficulty": "Easy",
+   "points": 150,
+   "campaign": "CASE-004",
+   "stage": 1,
+   "flag": "FLAG{GHOST_SEGMENT_MAPPED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "192.168.44.0,255.255.252.0,192.168.47.255,1022",
+     "FLAG{GHOST_SEGMENT_MAPPED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-004-S2",
+   "title": "Network Ghost - Stage 2: DNS",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 250,
+   "campaign": "CASE-004",
+   "stage": 2,
+   "flag": "FLAG{TXT_CARRIED_THE_NAME}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "relay-07.lab.nullpoint.invalid",
+     "FLAG{TXT_CARRIED_THE_NAME}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-004-S3",
+   "title": "Network Ghost - Stage 3: Ports",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 300,
+   "campaign": "CASE-004",
+   "stage": 3,
+   "flag": "FLAG{RDP_FROM_OUTSIDE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "RDP,203.0.113.90",
+     "RDP, 203.0.113.90",
+     "FLAG{RDP_FROM_OUTSIDE}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-004-S4",
+   "title": "Network Ghost - Stage 4: Packet Simulation",
+   "category": "Mystery Archive",
+   "difficulty": "Hard",
+   "points": 350,
+   "campaign": "CASE-004",
+   "stage": 4,
+   "flag": "FLAG{REPEATED_ATTEMPTS_THEN_SUCCESS}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "RDP brute force from 203.0.113.90",
+     "RDP brute force",
+     "RDP brute force from 203.0.113.90",
+     "FLAG{REPEATED_ATTEMPTS_THEN_SUCCESS}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-004-S5",
+   "title": "Network Ghost - Stage 5: Final Case",
+   "category": "Mystery Archive",
+   "difficulty": "Hard",
+   "points": 450,
+   "campaign": "CASE-004",
+   "stage": 5,
+   "flag": "FLAG{GHOST_NETWORK_CASE_CLOSED}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{GHOST_NETWORK_CASE_CLOSED}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-005-S1",
+   "title": "The Unknown Cipher - Stage 1: Pattern Recognition",
+   "category": "Mystery Archive",
+   "difficulty": "Medium",
+   "points": 300,
+   "campaign": "CASE-005",
+   "stage": 1,
+   "flag": "FLAG{PATTERN_BEFORE_KEYSPACE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-005-S2",
+   "title": "The Unknown Cipher - Stage 2: Substitution",
+   "category": "Mystery Archive",
+   "difficulty": "Hard",
+   "points": 400,
+   "campaign": "CASE-005",
+   "stage": 2,
+   "flag": "FLAG{KEY_REUSE_IS_THE_FINDING}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{KEY_REUSE_IS_THE_FINDING}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-005-S3",
+   "title": "The Unknown Cipher - Stage 3: Frequency Analysis",
+   "category": "Mystery Archive",
+   "difficulty": "Hard",
+   "points": 350,
+   "campaign": "CASE-005",
+   "stage": 3,
+   "flag": "FLAG{FREQUENCY_BEATS_BRUTE_FORCE}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "THE MAPPING WAS REUSED SO THE THIRD MESSAGE FELL TO A FREQUENCY ATTACK"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-005-S4",
+   "title": "The Unknown Cipher - Stage 4: Multi-Layer Encoding",
+   "category": "Mystery Archive",
+   "difficulty": "Hard",
+   "points": 350,
+   "campaign": "CASE-005",
+   "stage": 4,
+   "flag": "FLAG{LAYERS_ARE_NOT_SECURITY}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{LAYERS_ARE_NOT_SECURITY}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  },
+  {
+   "id": "CASE-005-S5",
+   "title": "The Unknown Cipher - Stage 5: Final Cipher",
+   "category": "Mystery Archive",
+   "difficulty": "Expert",
+   "points": 600,
+   "campaign": "CASE-005",
+   "stage": 5,
+   "flag": "FLAG{CIPHER_IDENTIFIED_AND_BROKEN}",
+   "answer": {
+    "type": "text",
+    "expects": [
+     "FLAG{CIPHER_IDENTIFIED_AND_BROKEN}"
+    ],
+    "contains": false,
+    "strict": false,
+    "caseSensitive": false
+   }
+  }
+ ]
+}

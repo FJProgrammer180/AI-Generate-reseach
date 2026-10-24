@@ -34,3 +34,31 @@ node ctf-analyst-academy/tools/smoke.js    # drives the real UI headlessly
 
 See [`ctf-analyst-academy/README.md`](ctf-analyst-academy/README.md) for the full
 inventory, scoring rules, architecture map and the guide for adding challenges.
+
+### `cyberlab/` — CyberLab V4 (real accounts, PHP + MySQL)
+
+The V4 upgrade of the academy: the same workstation UI, terminal, labs and
+102 challenges, now behind real server-side accounts. PHP 8.2+ with PDO
+(prepared statements, native prepares), `password_hash`/`password_verify`,
+hardened sessions (HttpOnly + SameSite=Lax, regeneration on login), CSRF on
+every write, throttled generic-error login, a 7-table schema
+(`cyberlab/database/schema.sql` for MySQL/MariaDB, SQLite mirror for
+dev/tests), server-revalidated flags with single-transaction rewards that
+can only pay out once, per-account profile/progress/achievements/settings,
+an admin panel behind a live database role check, a CLI first-admin tool
+with no default credentials anywhere, and a safe one-time import of legacy
+localStorage progress that recalculates every award server-side.
+
+```bash
+cp cyberlab/.env.example cyberlab/.env        # fill in DB_* credentials
+mysql -u root -p < cyberlab/database/schema.sql
+php -S 0.0.0.0:8080 -t cyberlab/public cyberlab/bin/serve-router.php
+php cyberlab/tests/run.php                    # 103 backend checks (SQLite)
+```
+
+Verified at release on PHP 8.3 (WASM) + SQLite: 103 unit + 37 HTTP-cycle +
+7 code-grader checks pass, and the untouched academy suites still pass
+(2305 + 1415 checks). A live MySQL connection was **not** available in the
+build sandbox — see the (Indonesian) [`cyberlab/README.md`](cyberlab/README.md)
+for setup, verification SQL, troubleshooting, HTTPS notes, and the honest
+limits of an offline-flag dataset.

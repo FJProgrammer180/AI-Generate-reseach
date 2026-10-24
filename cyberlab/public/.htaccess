@@ -1,0 +1,25 @@
+# CyberLab V4 - Apache hardening for the public web root.
+# The rest of the application (app/, database/, bin/, storage/) must live
+# OUTSIDE the web root; these rules are defence in depth for this folder.
+
+Options -Indexes
+DirectoryIndex index.php
+
+# Never serve dotfiles, SQL, markdown or PHP source of include-only trees.
+<FilesMatch "(^\.|\.(sql|md|env|sqlite3|log)$)">
+  Require all denied
+</FilesMatch>
+
+# Baseline response headers (pages set stricter ones where needed).
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "same-origin"
+</IfModule>
+
+# Force HTTPS when deployed behind a certificate (uncomment in production):
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTPS} off
+#   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
