@@ -21,3 +21,25 @@ ctf-analyst-academy/*progress*.json
 ctf-analyst-academy/*.save.json
 # never commit captured evidence or scratch dumps from a lab session
 ctf-analyst-academy/scratch/
+
+# --- CyberLab V4 ---
+# real environment / secrets (the committed template is .env.example)
+.env
+cyberlab/.env
+# local SQLite databases and session/log scratch
+cyberlab/storage/*
+!cyberlab/storage/.gitkeep
+*.sqlite3
+*.log
+# assets copied by cyberlab/bin/sync-assets.php for standalone deploys
+# (canonical copies live in ctf-analyst-academy/assets; auth/bridge files in
+# public/assets ARE tracked, so only the sync'd duplicates are ignored)
+cyberlab/public/assets/css/style.css
+cyberlab/public/assets/js/*.js
+cyberlab/public/assets/js/data/
+!cyberlab/public/assets/js/auth.js
+!cyberlab/public/assets/js/server-bridge.js
+# local php-wasm test harness dependencies
+cyberlab/tests/wasm/node_modules/
+cyberlab/tests/wasm/package-lock.json
+cyberlab/tests/wasm/node_modules
