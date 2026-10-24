@@ -1,0 +1,60 @@
+# ---------------------------------------------------------------------------
+# CyberLab / CTF Analyst Academy — Netlify deployment configuration
+#
+# The site is a zero-dependency, fully static application. There is no
+# package.json, no bundler and no build output directory: the published site
+# IS the `ctf-analyst-academy/` folder, whose `index.html` is the entry point.
+#
+# The previous deployment published the REPOSITORY ROOT, which contains no
+# index.html (only `Visual studio code project/`, `ctf-analyst-academy/`, a
+# README and a LICENSE). Netlify therefore had nothing to serve at `/` and
+# returned its own "Page not found" screen. Publishing the real app folder is
+# the fix; the settings below take precedence over the site's UI build settings.
+# ---------------------------------------------------------------------------
+
+[build]
+  # No compilation step. This explicit command also neutralises any stale
+  # `npm run build` left in the Netlify UI (there is no package.json here).
+  command = "echo 'CyberLab is a static site - no build step required.'"
+  # Publish the folder that actually contains index.html.
+  publish = "ctf-analyst-academy"
+
+[build.environment]
+  # Nothing here needs Node, but pin the runtime so the build image is stable.
+  NODE_VERSION = "20"
+
+# Baseline hardening. The app is fully offline, so these cost nothing.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    X-Frame-Options = "SAMEORIGIN"
+
+# Long-lived caching for the static assets, revalidated entry point.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# NOTE ON SPA FALLBACK — deliberately absent.
+# CyberLab does not use path-based client-side routing: navigation is in-page
+# state driven by `data-view` buttons, and there are no `/challenges/...`,
+# `/campaigns/...` style URLs to resolve. A blanket `/*  /index.html  200`
+# redirect would therefore not fix anything real, and it would mask genuinely
+# missing assets (a missing .js file would return HTML with a 200 status).
+# Netlify's default 404 is the correct behaviour for unknown paths here.
+# If path-based routes are ever added, add an explicit exception list first, e.g.
+#   [[redirects]]
+#     from = "/api/*"
+#     to = "/.netlify/functions/:splat"
+#     status = 200
+#   [[redirects]]
+#     from = "/*"
+#     to = "/index.html"
+#     status = 200

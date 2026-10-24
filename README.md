@@ -34,3 +34,51 @@ node ctf-analyst-academy/tools/smoke.js    # drives the real UI headlessly
 
 See [`ctf-analyst-academy/README.md`](ctf-analyst-academy/README.md) for the full
 inventory, scoring rules, architecture map and the guide for adding challenges.
+
+---
+
+## Deployment (Netlify)
+
+This repository is a **monorepo**: the static site lives in `ctf-analyst-academy/`, not at the
+repository root. That is what caused the Netlify "Page not found" screen - the site was
+publishing the repository root, which contains no `index.html`.
+
+Deployment is configured by [`netlify.toml`](netlify.toml):
+
+```toml
+[build]
+  command = "echo 'CyberLab is a static site - no build step required.'"
+  publish = "ctf-analyst-academy"
+```
+
+There is **no build step**: no `package.json`, no bundler, no `dist/`. The published directory
+*is* the application folder, and `ctf-analyst-academy/index.html` is the entry point.
+
+`ctf-analyst-academy/netlify.toml` is the matching config for the case where the Netlify site's
+**base directory** is set to `ctf-analyst-academy` (Netlify reads `netlify.toml` from the base
+directory, so the root file would be ignored). It publishes `.` - the same folder, same result.
+
+Notes:
+
+- **No SPA rewrite.** Navigation is in-page state (`data-view` buttons); there are no
+  `/challenges/<id>` style URLs. A blanket `/* → /index.html 200` rule would neither fix
+  anything nor be harmless: it would turn genuinely missing assets into HTML served with a
+  200 status. Unknown paths correctly 404.
+- Any `npm run build` left over in the Netlify site UI is neutralised by the explicit
+  `command` above, and the `publish` value in `netlify.toml` takes precedence over the UI.
+- There are no functions, no environment variables and no database in this project.
+
+Verify the config before pushing (it catches the 404 class of mistake, including
+filename-case errors that only break on Netlify's case-sensitive filesystem):
+
+```bash
+node ctf-analyst-academy/tools/check-deploy.js
+```
+
+Full pre-deploy gate:
+
+```bash
+node ctf-analyst-academy/tools/verify.js \
+  && node ctf-analyst-academy/tools/smoke.js \
+  && node ctf-analyst-academy/tools/check-deploy.js
+```

@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# Fallback configuration for when the Netlify site's *base directory* is set to
+# `ctf-analyst-academy` in the site settings.
+#
+# Netlify reads netlify.toml from the base directory when a base is configured,
+# so the repository-root netlify.toml would be ignored in that case. Both files
+# resolve to the same published folder, so either configuration is correct:
+#
+#   base = (repo root)          -> ../netlify.toml, publish = "ctf-analyst-academy"
+#   base = ctf-analyst-academy  -> this file,       publish = "."  (= this folder)
+# ---------------------------------------------------------------------------
+
+[build]
+  command = "echo 'CyberLab is a static site - no build step required.'"
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    X-Frame-Options = "SAMEORIGIN"
