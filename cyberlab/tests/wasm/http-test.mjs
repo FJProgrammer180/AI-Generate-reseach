@@ -10,7 +10,7 @@ import { PHPRequestHandler, HttpCookieStore } from "@php-wasm/universal";
 import { makePhp, populateVfs, migrate } from "./lib.mjs";
 
 const php = await makePhp();
-populateVfs(php, { withAssets: true });
+populateVfs(php);
 await migrate(php);
 
 function makeClient() {
@@ -111,6 +111,7 @@ check("session id regenerated at login (fixation defence)", !!anonSid && !!authe
 console.log("\n== workstation & progress API ==");
 res = await A.request({ url: "/index.php" });
 check("workstation 200 for the account", res.httpStatusCode === 200 && res.text.includes("@fajri") && res.text.includes("window.CYBERLAB"));
+const workstationHtml = res.text;
 const bridgeCsrf = csrfFromHtml(res.text);
 check("bridge CSRF token present", !!bridgeCsrf);
 
@@ -122,6 +123,16 @@ res = await A.request({ url: "/assets/js/server-bridge.js" });
 check("server bridge served", res.httpStatusCode === 200 && res.text.includes("CYBERLAB"));
 res = await A.request({ url: "/assets/js/data/challenges-crypto.js" });
 check("challenge dataset served", res.httpStatusCode === 200 && res.text.includes("CRYPTO-001"));
+
+const workstationAssetRefs = [...workstationHtml.matchAll(/(?:href|src)="(assets\/[^"]+)"/g)].map((m) => m[1]);
+const missingWorkstationAssets = [];
+for (const ref of workstationAssetRefs) {
+  const assetRes = await A.request({ url: "/" + ref });
+  if (assetRes.httpStatusCode !== 200 || assetRes.bytes.length === 0) missingWorkstationAssets.push(ref);
+}
+check("every Academy runtime asset referenced by the workstation is served from CyberLab",
+  workstationAssetRefs.length >= 24 && missingWorkstationAssets.length === 0,
+  missingWorkstationAssets.join(","));
 
 res = await A.request({ url: "/api/progress.php" });
 check("progress starts at zero in the database",

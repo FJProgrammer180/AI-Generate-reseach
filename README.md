@@ -56,7 +56,7 @@ php -S 0.0.0.0:8080 -t cyberlab/public cyberlab/bin/serve-router.php
 php cyberlab/tests/run.php                    # 103 backend checks (SQLite)
 ```
 
-Verified at release on PHP 8.3 (WASM) + SQLite: 103 unit + 41 HTTP-cycle +
+Verified at release on PHP 8.3 (WASM) + SQLite: 103 unit + 42 HTTP-cycle +
 7 code-grader checks pass, and the untouched academy suites still pass
 (2305 + 1415 checks). A live MySQL connection was **not** available in the
 build sandbox — see the (Indonesian) [`cyberlab/README.md`](cyberlab/README.md)

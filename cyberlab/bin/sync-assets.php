@@ -2,19 +2,16 @@
 /* ============================================================================
  * bin/sync-assets.php - copy the workstation's static assets into public/.
  * ----------------------------------------------------------------------------
- * public/index.php references the academy's original assets (assets/css/
- * style.css, assets/js/*.js, assets/js/data/*.js). In this repository those
- * files live in ../ctf-analyst-academy/assets, so for a standalone deploy
- * (XAMPP/Apache/Nginx without an alias) run:
+ * public/index.php references the Academy runtime (assets/css/style.css,
+ * assets/js/*.js, assets/js/data/*.js). Those files are tracked as
+ * byte-for-byte copies in cyberlab/public/assets, so CyberLab can be
+ * deployed on its own (XAMPP/Apache/Nginx) without an alias to the sibling
+ * academy folder. After changing the canonical Academy sources, refresh and
+ * commit the CyberLab copies:
  *
  *   php bin/sync-assets.php
- *
- * It copies style.css + all engine/data JS into cyberlab/public/assets/,
- * EXCLUDING state.js (the bridge wraps the academy's copy; keeping a single
- * source matters less than never serving a stale duplicate... state.js is
- * copied too - see list - because the workstation needs it locally; re-run
- * this script whenever the academy dataset changes, together with
- * tools/export-catalog.js).
+ *   node tools/export-catalog.js
+ *   node tools/check-academy-parity.js
  *
  * CyberLab's OWN assets (auth.css, auth.js, server-bridge.js) live there
  * already and are never overwritten.

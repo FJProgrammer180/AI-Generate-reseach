@@ -37,7 +37,7 @@ const PAGE_ALIASES = new Map([
 ]);
 
 const php = await makePhp();
-populateVfs(php, { withAssets: true });
+populateVfs(php);
 console.log(await migrate(php));
 
 if (process.env.CYBERLAB_SEED_ADMIN === "1") {

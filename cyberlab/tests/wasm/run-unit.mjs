@@ -4,7 +4,7 @@
 import { makePhp, populateVfs } from "./lib.mjs";
 
 const php = await makePhp();
-populateVfs(php, { withAssets: false });
+populateVfs(php);
 
 const out = await php.run({ scriptPath: "/cyberlab/tests/run.php" });
 process.stdout.write(out.text);

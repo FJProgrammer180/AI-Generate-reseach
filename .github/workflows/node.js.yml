@@ -35,6 +35,12 @@ jobs:
         working-directory: cyberlab/tests/wasm
         run: npm ci --ignore-scripts
 
+      - name: Verify Academy runtime copied into CyberLab
+        run: node cyberlab/tools/check-academy-parity.js
+
+      - name: Verify CyberLab server catalog matches Academy dataset
+        run: node cyberlab/tools/export-catalog.js --check
+
       - name: Verify CTF Analyst Academy data
         run: node ctf-analyst-academy/tools/verify.js
 
