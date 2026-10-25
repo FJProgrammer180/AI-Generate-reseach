@@ -31,14 +31,10 @@ cyberlab/storage/*
 !cyberlab/storage/.gitkeep
 *.sqlite3
 *.log
-# assets copied by cyberlab/bin/sync-assets.php for standalone deploys
-# (canonical copies live in ctf-analyst-academy/assets; auth/bridge files in
-# public/assets ARE tracked, so only the sync'd duplicates are ignored)
-cyberlab/public/assets/css/style.css
-cyberlab/public/assets/js/*.js
-cyberlab/public/assets/js/data/
-!cyberlab/public/assets/js/auth.js
-!cyberlab/public/assets/js/server-bridge.js
+# CyberLab's public/assets are tracked. They contain CyberLab's own auth
+# assets plus byte-for-byte copies of every CTF Analyst Academy runtime
+# asset, so cyberlab/ can be deployed without the sibling academy folder.
+# Refresh those copies with cyberlab/bin/sync-assets.php after academy edits.
 # local php-wasm test harness dependencies. The harness lockfile is tracked
 # so GitHub Actions can use npm ci/cache reproducibly.
 cyberlab/tests/wasm/node_modules/

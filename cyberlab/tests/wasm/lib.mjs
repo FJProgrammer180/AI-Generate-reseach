@@ -1,10 +1,11 @@
 /* ============================================================================
  * lib.mjs - shared bootstrap for the PHP-WASM harness.
  * Creates a PHP 8.3 (WASM) instance, copies the cyberlab/ tree into its
- * virtual filesystem at /cyberlab, syncs the academy assets into
- * /cyberlab/public/assets (exactly like bin/sync-assets.php), writes a
- * SQLite .env, and applies database/schema.sqlite.sql. The PHP code under
- * test is byte-identical to production; only DB_DRIVER differs.
+ * virtual filesystem at /cyberlab, writes a SQLite .env, and applies
+ * database/schema.sqlite.sql. The copied tree already contains the Academy
+ * runtime under cyberlab/public/assets, so this harness intentionally has
+ * no dependency on the sibling ctf-analyst-academy/ folder. The PHP code
+ * under test is byte-identical to production; only DB_DRIVER differs.
  * ==========================================================================*/
 import fs from "node:fs";
 import path from "node:path";
@@ -14,7 +15,6 @@ import { loadNodeRuntime } from "@php-wasm/node";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const CYBERLAB_DIR = path.resolve(HERE, "..", "..");
-export const ACADEMY_DIR = path.resolve(CYBERLAB_DIR, "..", "ctf-analyst-academy");
 
 let processIdCounter = 10;
 
@@ -40,17 +40,9 @@ function copyTree(php, hostDir, vfsDir, skip = new Set()) {
   }
 }
 
-/** Copy the app into the VFS; optionally include the (larger) academy assets. */
-export function populateVfs(php, { withAssets = false } = {}) {
+/** Copy the complete, self-contained CyberLab tree into the VFS. */
+export function populateVfs(php) {
   copyTree(php, CYBERLAB_DIR, "/cyberlab");
-  if (withAssets) {
-    const own = new Set([
-      "/cyberlab/public/assets/css/auth.css",
-      "/cyberlab/public/assets/js/auth.js",
-      "/cyberlab/public/assets/js/server-bridge.js",
-    ]);
-    copyTree(php, path.join(ACADEMY_DIR, "assets"), "/cyberlab/public/assets", own);
-  }
   php.mkdirTree("/cyberlab/storage");
   php.writeFile("/cyberlab/.env", [
     "DB_DRIVER=sqlite",

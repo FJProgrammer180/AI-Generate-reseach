@@ -14,6 +14,7 @@
  * the browser. Run it again whenever the JS dataset changes:
  *
  *   node cyberlab/tools/export-catalog.js
+ *   node cyberlab/tools/export-catalog.js --check   # verify without writing
  *
  * Fails (exit 1) on duplicate ids, unknown difficulties/categories, points
  * outside the tier band, or any challenge the exporter cannot represent
@@ -118,16 +119,26 @@ if (problems.length) {
   process.exit(1);
 }
 
-fs.mkdirSync(path.dirname(OUT), { recursive: true });
-fs.writeFileSync(OUT, JSON.stringify({
+const rendered = JSON.stringify({
   generatedFrom: "ctf-analyst-academy/assets/js (CTF.DB registration order preserved)",
   count: out.length,
   totalPoints: out.reduce((s, c) => s + c.points, 0),
   campaigns: (global.CTF.CAMPAIGN_META || []).map((m) => ({ id: m.id, title: m.title, points: m.points, stages: m.stages })),
   challenges: out,
-}, null, 1) + "\n");
+}, null, 1) + "\n";
 
-console.log(`wrote ${OUT}`);
+if (process.argv.includes("--check")) {
+  const current = fs.existsSync(OUT) ? fs.readFileSync(OUT, "utf8") : null;
+  if (current !== rendered) {
+    console.error(`EXPORT CHECK FAILED: ${OUT} is missing or out of date; run node cyberlab/tools/export-catalog.js`);
+    process.exit(1);
+  }
+  console.log(`catalog up to date: ${OUT}`);
+} else {
+  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+  fs.writeFileSync(OUT, rendered);
+  console.log(`wrote ${OUT}`);
+}
 console.log(`${out.length} challenges, ${out.reduce((s, c) => s + c.points, 0)} points, ` +
   `${out.filter((c) => c.answer.type === "code").length} code-graded, ` +
   `${out.filter((c) => c.campaign).length} campaign stages`);

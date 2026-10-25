@@ -10,8 +10,10 @@
  * is re-validated. assets/js/server-bridge.js does that wiring without forking
  * the original app code.
  * Static assets (assets/css/style.css, assets/js/*.js, assets/js/data/*.js)
- * are the academy's own files - served from here by sync (bin/sync-assets.php)
- * or by the dev router's alias. Nothing is duplicated in this repository.
+ * are tracked byte-for-byte copies of the academy's runtime inside
+ * cyberlab/public/assets; bin/sync-assets.php refreshes them from the
+ * canonical academy sources. CyberLab therefore does not need the sibling
+ * academy folder at runtime.
  * ==========================================================================*/
 declare(strict_types=1);
 require dirname(__DIR__) . '/app/bootstrap.php';

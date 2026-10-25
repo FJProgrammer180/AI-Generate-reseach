@@ -100,27 +100,31 @@ Variabel yang dibaca (`app/config/database.php`):
 (prepared statement asli). `.env` tidak pernah di-commit (sudah di
 `.gitignore`); yang ter-commit hanya `.env.example` berisi placeholder.
 
-**Aset frontend.** `public/index.php` memuat aset workstation asli
-(`assets/css/style.css`, `assets/js/*.js`, `assets/js/data/*.js`). Pilih
-salah satu:
+**Aset frontend.** Sistem Academy sudah disalin ke CyberLab: seluruh 22
+berkas runtime (`assets/css/style.css`, `assets/js/*.js`, dan
+`assets/js/data/*.js`) ter-track byte-for-byte di `cyberlab/public/assets/`,
+di samping aset milik CyberLab (`auth.css`, `auth.js`, `server-bridge.js`).
+Karena itu folder `cyberlab/` dapat di-deploy mandiri tanpa alias ke
+`../ctf-analyst-academy/`; router dev dan harness WASM juga hanya membaca
+isi `cyberlab/`.
 
-- **Di dalam repositori ini (dev):** tidak perlu apa-apa bila memakai router
-  bawaan (bagian 4) - router mengalihkannya ke
-  `../ctf-analyst-academy/assets`.
-- **Deploy mandiri (XAMPP/Apache/Nginx):** jalankan sekali
-  `php bin/sync-assets.php` untuk menyalin aset ke `cyberlab/public/assets/`
-  (berkas salinan itu sengaja di-gitignore; sumber kebenarannya tetap di
-  folder academy), atau buat alias web server `/assets` ke folder tersebut.
+Bila sumber Academy berubah, segarkan salinan dan katalog server dari checkout
+repositori lengkap, lalu commit hasilnya:
 
-Bila dataset challenge berubah, segarkan katalog server:
-`node tools/export-catalog.js` (menulis `app/data/challenges.json` dari
-dataset JS asli, dalam urutan registrasi browser, lengkap dengan flag dan
-aturan jawaban untuk validasi server).
+```bash
+php cyberlab/bin/sync-assets.php
+node cyberlab/tools/export-catalog.js
+node cyberlab/tools/check-academy-parity.js
+```
+
+`export-catalog.js` menulis `app/data/challenges.json` dari dataset JS asli,
+dalam urutan registrasi browser, lengkap dengan flag dan aturan jawaban untuk
+validasi server. Mode `--check` memverifikasi katalog tanpa menulis ulang.
 
 ## 4. Menjalankan aplikasi
 
 ```bash
-# Pengembangan - server bawaan PHP (router mengurus alias aset)
+# Pengembangan - server bawaan PHP (aset Academy sudah ada di cyberlab/public/assets)
 php -S 0.0.0.0:8080 -t cyberlab/public cyberlab/bin/serve-router.php
 # buka http://localhost:8080/  -> Anda diarahkan ke login.php
 ```
@@ -189,15 +193,15 @@ cyberlab/
 ├── public/            index.php (workstation terproteksi), login.php, register.php,
 │                      logout.php, profile.php, admin.php, 404.php, favicon.svg/favicon.ico,
 │                      api/{progress,submit,migrate,settings}.php
-│                      assets/css/auth.css, assets/js/{auth.js,server-bridge.js}  (+ aset academy via router/sync)
+│                      assets/ (seluruh runtime Academy ter-track + auth.css/auth.js/server-bridge.js)
 ├── app/               bootstrap, config/database.php, lib/ (Session, Csrf, Validator,
 │                      Catalog, Scoring), models/ (3 repository PDO), services/
 │                      (Auth, Challenge, Achievement, Migration, Admin, CodeRunner),
 │                      middleware/AuthGuard, views/layout, data/challenges.json
 ├── database/          schema.sql (MySQL) + schema.sqlite.sql (dev/test) + migrations/
 ├── bin/               migrate.php, create-admin.php, sync-assets.php, serve-router.php
-├── tools/             export-catalog.js (dataset JS -> katalog server)
-└── tests/             run.php (103 pemeriksaan) + wasm/ (http-test.mjs 41, code-runner 7, serve.mjs)
+├── tools/             export-catalog.js + check-academy-parity.js (dataset/paritas Academy)
+└── tests/             run.php (103 pemeriksaan) + wasm/ (http-test.mjs 42, code-runner 7, serve.mjs)
 ```
 
 Keputusan penting:
@@ -258,7 +262,7 @@ Keputusan penting:
 | `Unknown database 'cyberlab_db'` | Impor `database/schema.sql` (membuat databasenya) atau `CREATE DATABASE cyberlab_db ...` dulu, baru `php bin/migrate.php`. |
 | `Access denied for user` | Password di `.env` salah atau `GRANT` belum diberikan (lihat bagian 2). |
 | `could not find driver` | Ekstensi `pdo_mysql`/`pdo_sqlite` belum aktif: `php -m`, aktifkan di `php.ini`, restart web server. |
-| Halaman workstation polos tanpa gaya/data | Aset academy belum tersedia: jalankan `php bin/sync-assets.php` atau gunakan `bin/serve-router.php`. |
+| Halaman workstation polos tanpa gaya/data | Deployment tidak menyalin seluruh `cyberlab/public/assets`, atau salinan Academy sudah usang. Pastikan 22 berkas runtime Academy ikut ter-upload; dari checkout lengkap jalankan `php cyberlab/bin/sync-assets.php` lalu `node cyberlab/tools/check-academy-parity.js`. |
 | URL tanpa `.php` atau `index.html` menghasilkan 404 | Gunakan router dev di atas atau Apache dengan `public/.htaccess` aktif; keduanya mengarahkan alias `/register`, `/login`, `/profile`, `/admin`, `/logout`, dan `/index.html` ke entry point kanonis. URL yang benar-benar tidak ada akan menampilkan `404.php`, bukan halaman 404 polos dari server. |
 | Challenge kode selalu "tidak tersedia" | Isi `CODE_RUNNER_NODE` dengan path Node.js (mis. `/usr/bin/node`) lalu restart. |
 | Tetap ter-redirect ke login setelah masuk | Cookie sesi terblokir: cek jam server, `session.save_path` dapat ditulis, dan `SESSION_SECURE` tidak memaksa `Secure` saat situs masih HTTP polos. |
@@ -279,10 +283,12 @@ php cyberlab/tests/run.php
 # Tanpa PHP native (PHP-WASM 8.3 + SQLite; Node 24.18+ dan npm 11.16+):
 cd cyberlab/tests/wasm && npm ci --ignore-scripts
 npm run test:unit          # 103 pemeriksaan layanan & repository
-npm run test:http          # 41 pemeriksaan request-cycle (sesi, CSRF, API, isolasi, 404)
+npm run test:http          # 42 pemeriksaan request-cycle (sesi, CSRF, API, aset, isolasi, 404)
 npm run test:code-runner   # 7 pemeriksaan grader kode tersandbox
 
-# Regresi lab lama (harus tetap hijau, tidak diubah V4):
+# Paritas salinan Academy di CyberLab + regresi lab lama:
+node cyberlab/tools/check-academy-parity.js
+node cyberlab/tools/export-catalog.js --check
 node ctf-analyst-academy/tools/verify.js
 node ctf-analyst-academy/tools/smoke.js
 ```
@@ -296,7 +302,7 @@ transaksi (dipaksa gagal di tengah), isolasi antar-pengguna (termasuk
 `user_id` selundupan), penjaga admin, perhitungan ulang migrasi, penolakan
 kode tanpa runner, paritas skor & jawaban terhadap engine JS (102
 challenge), dan kegagalan koneksi database. Hasil terverifikasi saat rilis:
-**103/103, 41/41, dan 7/7 lulus** (PHP-WASM 8.3 + SQLite); suite academy
+**103/103, 42/42, dan 7/7 lulus** (PHP-WASM 8.3 + SQLite); suite academy
 tetap **2305 assertions + 1415 smoke checks** lulus. Yang **belum**
 terverifikasi di lingkungan pembuatan: koneksi MySQL sungguhan dan eksekusi
 `bin/*` di PHP CLI native (keduanya menunggu mesin ber-PHP/MySQL - jalankan

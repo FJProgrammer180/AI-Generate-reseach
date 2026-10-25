@@ -4,11 +4,10 @@
  * ----------------------------------------------------------------------------
  *   php -S 0.0.0.0:8080 -t cyberlab/public cyberlab/bin/serve-router.php
  *
- * Real files under public/ are served as usual. Requests for the academy's
- * static assets that have NOT been copied into public/assets (see
- * bin/sync-assets.php) are transparently served from
- * ../ctf-analyst-academy/assets, so the dev workstation always runs the
- * repository's current dataset without duplicating it.
+ * Real files under public/ are served as usual. CyberLab is self-contained:
+ * public/assets contains tracked, byte-for-byte copies of the Academy
+ * runtime (refresh them with bin/sync-assets.php after Academy edits), so
+ * this router deliberately has no sibling-folder asset fallback.
  *
  * The router also canonicalises the friendly page URLs people commonly
  * type (`/login`, `/register`, `/index.html`) and renders CyberLab's own
@@ -59,32 +58,6 @@ if ($uri !== '/' && $publicReal !== false) {
         && is_file($candidate)
     ) {
         return false; // built-in server serves the file (incl. .php execution)
-    }
-}
-
-if (str_starts_with($uri, '/assets/')) {
-    $academyFile = dirname(__DIR__, 2) . '/ctf-analyst-academy' . $uri;
-    // Normalise and confine to the academy assets directory.
-    $base = realpath(dirname(__DIR__, 2) . '/ctf-analyst-academy/assets');
-    $real = $base !== false ? realpath($academyFile) : false;
-    if ($real !== false && $base !== false && str_starts_with($real, $base) && is_file($real)) {
-        $types = [
-            'css' => 'text/css',
-            'js' => 'text/javascript',
-            'html' => 'text/html',
-            'png' => 'image/png',
-            'jpg' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'svg' => 'image/svg+xml',
-            'ico' => 'image/x-icon',
-            'json' => 'application/json',
-        ];
-        $ext = strtolower(pathinfo($real, PATHINFO_EXTENSION));
-        $binary = in_array($ext, ['png', 'jpg', 'jpeg', 'ico'], true);
-        header('Content-Type: ' . ($types[$ext] ?? 'application/octet-stream') . ($binary ? '' : '; charset=utf-8'));
-        header('X-Content-Type-Options: nosniff');
-        readfile($real);
-        return true;
     }
 }
 
