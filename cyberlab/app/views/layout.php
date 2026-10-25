@@ -16,6 +16,8 @@ function render_header(string $title, ?array $account = null): void
     echo '<meta charset="utf-8">' . "\n";
     echo '<meta name="viewport" content="width=device-width, initial-scale=1">' . "\n";
     echo '<title>' . e($title) . ' - CyberLab V4</title>' . "\n";
+    echo '<link rel="icon" href="favicon.svg" type="image/svg+xml">' . "\n";
+    echo '<link rel="shortcut icon" href="favicon.ico">' . "\n";
     echo '<link rel="stylesheet" href="assets/css/style.css">' . "\n";
     echo '<link rel="stylesheet" href="assets/css/auth.css">' . "\n";
     echo "</head>\n<body>\n";

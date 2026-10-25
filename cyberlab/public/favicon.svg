@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>CyberLab</title>
+  <rect x="3" y="3" width="58" height="58" rx="14" fill="#0b0f14" stroke="#5ad1a5" stroke-width="4"/>
+  <path d="M20 20 L34 32 L20 44" fill="none" stroke="#5ad1a5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 45 H50" stroke="#63b3ed" stroke-width="6" stroke-linecap="round"/>
+</svg>

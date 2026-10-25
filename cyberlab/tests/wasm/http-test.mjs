@@ -203,6 +203,25 @@ check("workstation protected again after logout (session destroyed server-side)"
 res = await B.request({ url: "/api/progress.php" });
 check("API 401 after logout", res.httpStatusCode === 401);
 
+console.log("\n== 404 handling & favicon ==");
+res = await B.request({
+  url: "/404.php",
+  headers: { "x-cyberlab-original-path": "/missing-page?from=test" },
+});
+check("custom 404 page keeps 404 status and offers shortcuts",
+  res.httpStatusCode === 404 && res.text.includes("Halaman tidak ditemukan")
+  && res.text.includes("/missing-page") && res.text.includes("Buka workstation"));
+res = await B.request({
+  url: "/404.php",
+  headers: { "x-cyberlab-original-path": "/api/does-not-exist.php" },
+});
+check("unknown API route gets JSON 404",
+  res.httpStatusCode === 404 && res.json && res.json.ok === false && res.json.error === "not_found");
+res = await B.request({ url: "/favicon.svg" });
+check("SVG favicon is served", res.httpStatusCode === 200 && res.text.includes("<svg"));
+res = await B.request({ url: "/favicon.ico" });
+check("ICO favicon is served", res.httpStatusCode === 200 && res.bytes.length > 0);
+
 console.log(`\nTOTAL: ${pass} passed, ${fail} failed`);
 if (fail) console.log("FAILED: " + failures.join("; "));
 process.exit(fail ? 1 : 0);
