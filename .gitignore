@@ -39,7 +39,8 @@ cyberlab/public/assets/js/*.js
 cyberlab/public/assets/js/data/
 !cyberlab/public/assets/js/auth.js
 !cyberlab/public/assets/js/server-bridge.js
-# local php-wasm test harness dependencies
+# local php-wasm test harness dependencies. The harness lockfile is tracked
+# so GitHub Actions can use npm ci/cache reproducibly.
 cyberlab/tests/wasm/node_modules/
-cyberlab/tests/wasm/package-lock.json
 cyberlab/tests/wasm/node_modules
+!cyberlab/tests/wasm/package-lock.json

@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "description": "Dev/test harness: runs the real CyberLab PHP code on PHP-WASM (PHP 8.3) + SQLite where no native PHP/MySQL exists. Production uses native PHP 8.2+ with MySQL; see ../../README.md.",
+  "engines": {
+    "node": ">=24.18.0",
+    "npm": ">=11.16.0"
+  },
   "scripts": {
     "test:unit": "node run-unit.mjs",
     "test:http": "node http-test.mjs",
@@ -10,7 +14,7 @@
     "serve": "node serve.mjs"
   },
   "dependencies": {
-    "@php-wasm/node": "^1.0.0",
-    "@php-wasm/universal": "^1.0.0"
+    "@php-wasm/node": "3.1.60",
+    "@php-wasm/universal": "3.1.60"
   }
 }
