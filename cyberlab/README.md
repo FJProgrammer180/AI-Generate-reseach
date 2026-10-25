@@ -186,7 +186,8 @@ menentukan XP/poin/statusnya sendiri.
 ```
 cyberlab/
 ├── public/            index.php (workstation terproteksi), login.php, register.php,
-│                      logout.php, profile.php, admin.php, api/{progress,submit,migrate,settings}.php
+│                      logout.php, profile.php, admin.php, 404.php, favicon.svg/favicon.ico,
+│                      api/{progress,submit,migrate,settings}.php
 │                      assets/css/auth.css, assets/js/{auth.js,server-bridge.js}  (+ aset academy via router/sync)
 ├── app/               bootstrap, config/database.php, lib/ (Session, Csrf, Validator,
 │                      Catalog, Scoring), models/ (3 repository PDO), services/
@@ -195,7 +196,7 @@ cyberlab/
 ├── database/          schema.sql (MySQL) + schema.sqlite.sql (dev/test) + migrations/
 ├── bin/               migrate.php, create-admin.php, sync-assets.php, serve-router.php
 ├── tools/             export-catalog.js (dataset JS -> katalog server)
-└── tests/             run.php (103 pemeriksaan) + wasm/ (http-test.mjs 37, code-runner 7, serve.mjs)
+└── tests/             run.php (103 pemeriksaan) + wasm/ (http-test.mjs 41, code-runner 7, serve.mjs)
 ```
 
 Keputusan penting:
@@ -257,6 +258,7 @@ Keputusan penting:
 | `Access denied for user` | Password di `.env` salah atau `GRANT` belum diberikan (lihat bagian 2). |
 | `could not find driver` | Ekstensi `pdo_mysql`/`pdo_sqlite` belum aktif: `php -m`, aktifkan di `php.ini`, restart web server. |
 | Halaman workstation polos tanpa gaya/data | Aset academy belum tersedia: jalankan `php bin/sync-assets.php` atau gunakan `bin/serve-router.php`. |
+| URL tanpa `.php` atau `index.html` menghasilkan 404 | Gunakan router dev di atas atau Apache dengan `public/.htaccess` aktif; keduanya mengarahkan alias `/register`, `/login`, `/profile`, `/admin`, `/logout`, dan `/index.html` ke entry point kanonis. URL yang benar-benar tidak ada akan menampilkan `404.php`, bukan halaman 404 polos dari server. |
 | Challenge kode selalu "tidak tersedia" | Isi `CODE_RUNNER_NODE` dengan path Node.js (mis. `/usr/bin/node`) lalu restart. |
 | Tetap ter-redirect ke login setelah masuk | Cookie sesi terblokir: cek jam server, `session.save_path` dapat ditulis, dan `SESSION_SECURE` tidak memaksa `Secure` saat situs masih HTTP polos. |
 
@@ -276,7 +278,7 @@ php cyberlab/tests/run.php
 # Tanpa PHP native (PHP-WASM 8.3 + SQLite; yang dipakai menguji rilis ini):
 cd cyberlab/tests/wasm && npm install
 npm run test:unit          # 103 pemeriksaan layanan & repository
-npm run test:http          # 37 pemeriksaan request-cycle (sesi, CSRF, API, isolasi)
+npm run test:http          # 41 pemeriksaan request-cycle (sesi, CSRF, API, isolasi, 404)
 npm run test:code-runner   # 7 pemeriksaan grader kode tersandbox
 
 # Regresi lab lama (harus tetap hijau, tidak diubah V4):
@@ -293,7 +295,7 @@ transaksi (dipaksa gagal di tengah), isolasi antar-pengguna (termasuk
 `user_id` selundupan), penjaga admin, perhitungan ulang migrasi, penolakan
 kode tanpa runner, paritas skor & jawaban terhadap engine JS (102
 challenge), dan kegagalan koneksi database. Hasil terverifikasi saat rilis:
-**103/103, 37/37, dan 7/7 lulus** (PHP-WASM 8.3 + SQLite); suite academy
+**103/103, 41/41, dan 7/7 lulus** (PHP-WASM 8.3 + SQLite); suite academy
 tetap **2305 assertions + 1415 smoke checks** lulus. Yang **belum**
 terverifikasi di lingkungan pembuatan: koneksi MySQL sungguhan dan eksekusi
 `bin/*` di PHP CLI native (keduanya menunggu mesin ber-PHP/MySQL - jalankan

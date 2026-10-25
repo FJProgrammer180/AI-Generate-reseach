@@ -4,6 +4,15 @@
 
 Options -Indexes
 DirectoryIndex index.php
+ErrorDocument 404 /404.php
+
+# Friendly page aliases -> canonical PHP entry points. The internal rewrite
+# preserves POST bodies if a client submits to an extensionless URL.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^index\.html$ index.php [L,QSA]
+  RewriteRule ^(login|register|profile|admin|logout)/?$ $1.php [L,QSA]
+</IfModule>
 
 # Never serve dotfiles, SQL, markdown or PHP source of include-only trees.
 <FilesMatch "(^\.|\.(sql|md|env|sqlite3|log)$)">

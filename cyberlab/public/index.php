@@ -33,6 +33,8 @@ header('Cache-Control: no-store'); // never cache the authenticated shell
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CyberLab V4 - workstation <?= e($account['displayName']) ?></title>
 <meta name="description" content="CyberLab V4: workstation CTF &amp; keamanan siber dengan akun dan progres persisten di database.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="shortcut icon" href="favicon.ico">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/auth.css">
 <meta name="csrf-token" content="<?= e(Csrf::token()) ?>">

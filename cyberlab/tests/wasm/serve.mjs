@@ -19,6 +19,23 @@ import { makePhp, populateVfs, migrate } from "./lib.mjs";
 const portFlag = process.argv.indexOf("--port");
 const PORT = portFlag >= 0 ? Number(process.argv[portFlag + 1]) : 8080;
 
+// Match bin/serve-router.php + public/.htaccess in the browser preview:
+// friendly extensionless URLs use the canonical PHP entry points.
+const PAGE_ALIASES = new Map([
+  ["/index", "/index.php"],
+  ["/index.html", "/index.php"],
+  ["/login", "/login.php"],
+  ["/login/", "/login.php"],
+  ["/register", "/register.php"],
+  ["/register/", "/register.php"],
+  ["/profile", "/profile.php"],
+  ["/profile/", "/profile.php"],
+  ["/admin", "/admin.php"],
+  ["/admin/", "/admin.php"],
+  ["/logout", "/logout.php"],
+  ["/logout/", "/logout.php"],
+]);
+
 const php = await makePhp();
 populateVfs(php, { withAssets: true });
 console.log(await migrate(php));
@@ -53,6 +70,27 @@ const handler = new PHPRequestHandler({
 
 const server = http.createServer(async (req, res) => {
   try {
+    const method = req.method || "GET";
+    let url;
+    try {
+      url = new URL(req.url || "/", "http://preview.local");
+    } catch {
+      res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Bad Request");
+      return;
+    }
+
+    const collapsedPath = url.pathname.replace(/\/{2,}/g, "/");
+    const aliasTarget = PAGE_ALIASES.get(collapsedPath);
+    if ((method === "GET" || method === "HEAD") && (collapsedPath !== url.pathname || aliasTarget)) {
+      const location = (aliasTarget || collapsedPath) + url.search;
+      res.writeHead(302, { Location: location, "Cache-Control": "no-store" });
+      res.end();
+      return;
+    }
+    if (aliasTarget) url.pathname = aliasTarget;
+    else url.pathname = collapsedPath;
+
     const chunks = [];
     for await (const chunk of req) chunks.push(chunk);
     const body = Buffer.concat(chunks);
@@ -60,15 +98,39 @@ const server = http.createServer(async (req, res) => {
     for (const name of ["cookie", "content-type", "x-csrf-token", "accept"]) {
       if (req.headers[name]) headers[name] = req.headers[name];
     }
-    const out = await handler.request({
-      url: req.url || "/",
-      method: req.method || "GET",
+    let out = await handler.request({
+      url: url.pathname + url.search,
+      method,
       headers,
       body: body.length ? new Uint8Array(body) : undefined,
     });
+    let status = out.httpStatusCode;
+
+    if (status === 404 && url.pathname.startsWith("/api/")) {
+      res.writeHead(404, {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "no-store",
+        "X-Content-Type-Options": "nosniff",
+      });
+      res.end(JSON.stringify({ ok: false, error: "not_found", message: "Endpoint tidak ditemukan." }));
+      return;
+    }
+    if (status === 404 && url.pathname !== "/404.php") {
+      try {
+        out = await handler.request({
+          url: "/404.php",
+          method: "GET",
+          headers: { ...headers, "x-cyberlab-original-path": url.pathname + url.search },
+        });
+        status = 404;
+      } catch {
+        // Keep PHPRequestHandler's plain 404 if the branded page cannot run.
+      }
+    }
+
     const flat = {};
     for (const [k, v] of Object.entries(out.headers)) flat[k] = Array.isArray(v) ? v : [v];
-    res.writeHead(out.httpStatusCode, flat);
+    res.writeHead(status, flat);
     res.end(Buffer.from(out.bytes));
   } catch (err) {
     console.error("request failed:", err);
