@@ -132,8 +132,9 @@ Semua folder lain (`app/`, `database/`, `bin/`, `storage/`, `tests/`,
 
 **Tanpa PHP/MySQL sama sekali?** `tests/wasm/serve.mjs` menjalankan halaman
 PHP yang sama persis di PHP-WASM + SQLite untuk keperluan demo/preview
-(`cd tests/wasm && npm install && npm run serve`). Itu alat bantu dev, bukan
-server produksi - datanya hidup di memori proses.
+(`cd tests/wasm && npm ci --ignore-scripts && npm run serve`; harness yang
+terkunci membutuhkan Node **24.18+** dan npm **11.16+**). Itu alat bantu dev,
+bukan server produksi - datanya hidup di memori proses.
 
 ## 5. Mendaftarkan pengguna pertama & membuat admin
 
@@ -275,8 +276,8 @@ sesi selalu ber-flag `Secure`. Aplikasi juga mendeteksi `X-Forwarded-Proto`.
 # Di mesin ber-PHP (membuat DB SQLite in-memory; tidak menyentuh .env Anda):
 php cyberlab/tests/run.php
 
-# Tanpa PHP native (PHP-WASM 8.3 + SQLite; yang dipakai menguji rilis ini):
-cd cyberlab/tests/wasm && npm install
+# Tanpa PHP native (PHP-WASM 8.3 + SQLite; Node 24.18+ dan npm 11.16+):
+cd cyberlab/tests/wasm && npm ci --ignore-scripts
 npm run test:unit          # 103 pemeriksaan layanan & repository
 npm run test:http          # 41 pemeriksaan request-cycle (sesi, CSRF, API, isolasi, 404)
 npm run test:code-runner   # 7 pemeriksaan grader kode tersandbox

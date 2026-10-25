@@ -1,31 +1,54 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: Project tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-
+  test:
+    name: Node ${{ matrix.node-version }}
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        # The pinned @php-wasm/* 3.1.60 harness requires Node >= 24.18.0
+        # and npm >= 11.16.0.
+        node-version: [24.x]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: cyberlab/tests/wasm/package-lock.json
+
+      - name: Install CyberLab WASM test dependencies
+        working-directory: cyberlab/tests/wasm
+        run: npm ci --ignore-scripts
+
+      - name: Verify CTF Analyst Academy data
+        run: node ctf-analyst-academy/tools/verify.js
+
+      - name: Smoke test CTF Analyst Academy UI
+        run: node ctf-analyst-academy/tools/smoke.js
+
+      - name: CyberLab unit tests (PHP-WASM + SQLite)
+        working-directory: cyberlab/tests/wasm
+        run: npm run test:unit
+
+      - name: CyberLab HTTP request-cycle tests
+        working-directory: cyberlab/tests/wasm
+        run: npm run test:http
+
+      - name: CyberLab code-runner tests
+        working-directory: cyberlab/tests/wasm
+        run: npm run test:code-runner
